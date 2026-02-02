@@ -3,6 +3,13 @@
     <property name="index" value="./data/meta/about.xml"/>
     <property name="target" value="./html"/>
     <property name="target_xml" value="./html/xml-view"/>
+    <property name="snippet_dir" value="./html/witness_snippets" />
+    <delete>
+        <fileset dir="${snippet_dir}" includes="*.html" />
+    </delete>
+    <delete>
+        <fileset dir="${snippet_dir}" includes="*.json" />
+    </delete>
     <delete>
         <fileset dir="${target}" includes="*.html"/>
     </delete>
@@ -37,6 +44,10 @@
     <xslt in="./data/imprint.xml" out="${target}/imprint.html" style="./xslt/imprint.xsl">
         <factory name="net.sf.saxon.TransformerFactoryImpl"/>
         <classpath location="${basedir}/saxon/saxon9he.jar"/>
+    </xslt>
+    <xslt in="${index}" out="${target}/column_viewer.html" style="./xslt/column_viewer.xsl">
+        <factory name="net.sf.saxon.TransformerFactoryImpl" />
+        <classpath location="${basedir}/saxon/saxon9he.jar" />
     </xslt>
     <!-- <xslt in="./data/indices/listperson.xml" out="${target}/listperson.html" style="./xslt/listperson.xsl">
         <factory name="net.sf.saxon.TransformerFactoryImpl"/>
@@ -75,6 +86,9 @@
         <include name="*.html"/>
         <replacetoken>xmlns="http://www.w3.org/1999/xhtml"</replacetoken>
     </replace>
+    <exec executable="python3">
+        <arg value="pyscripts/make_snippets.py" />
+    </exec>
     <copy todir="${target}" flatten="true">
         <fileset dir="./data/">
             <include name="**/*.xml"/>
