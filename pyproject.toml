@@ -1,5 +1,5 @@
 [project]
-name = "wernher_static_"
+name = "wernher_static"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -7,5 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "acdh-tei-pyutils>=1.6",
     "jinja2>=3.1.6",
+    "saxonche>=12.9.0",
     "typesense>=1.1.1",
 ]

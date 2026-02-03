@@ -4,6 +4,7 @@
     <property name="target" value="./html"/>
     <property name="target_xml" value="./html/xml-view"/>
     <property name="snippet_dir" value="./html/witness_snippets" />
+    <property name="data_dir" value="./data/editions" />
     <delete>
         <fileset dir="${snippet_dir}" includes="*.html" />
     </delete>
@@ -13,6 +14,10 @@
     <delete>
         <fileset dir="${target}" includes="*.html"/>
     </delete>
+    <!-- copy files -->
+    <copy todir="${data_dir}">
+        <fileset dir="../initial_parsing/tei/" includes="*.xml"></fileset>
+    </copy>
     <xslt in="${index}" out="${target}/index.html" style="./xslt/index.xsl">
         <factory name="net.sf.saxon.TransformerFactoryImpl"/>
         <classpath location="${basedir}/saxon/saxon9he.jar"/>
@@ -21,7 +26,7 @@
         <factory name="net.sf.saxon.TransformerFactoryImpl"/>
         <classpath location="${basedir}/saxon/saxon9he.jar"/>
     </xslt>
-    <xslt style="./xslt/editions.xsl" basedir="./data/editions" destdir="${target}" includes="*.xml">
+    <xslt style="./xslt/editions.xsl" basedir="${data_dir}" destdir="${target}" includes="*.xml">
         <factory name="net.sf.saxon.TransformerFactoryImpl"/>
         <classpath location="${basedir}/saxon/saxon9he.jar"/>
     </xslt>

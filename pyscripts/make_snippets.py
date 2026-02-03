@@ -18,8 +18,8 @@ sorting_xpath = None
 # checks
 ###################
 
-with PySaxonProcessor(license=False) as proc:
-    print(f"using {proc.version}")
+# with PySaxonProcessor(license=False) as proc:
+#     print(f"using {proc.version}")
 
 os.makedirs(os.path.dirname(output_dir), exist_ok=True)
 
@@ -67,6 +67,7 @@ def xslt(in_xml_dir_glob: list, xsl_path: str, output_dir) -> dict:
         xsltproc = proc.new_xslt30_processor()
         executable = xsltproc.compile_stylesheet(stylesheet_file=xsl_path)
         for file_path in glob.glob(in_xml_dir_glob):
+            # get filename without path and suffix
             print(file_path)
             document = proc.parse_xml(xml_uri=file_path)
             output_file_path = get_outputfile(file_path, output_dir)
@@ -74,7 +75,7 @@ def xslt(in_xml_dir_glob: list, xsl_path: str, output_dir) -> dict:
             tei_doc = TeiReader(file_path)
             uid = get_uid(tei_doc)
             sorting = get_sorting(tei_doc)
-            title = f"{get_title(tei_doc)} {uid}"
+            title = f"{get_title(tei_doc)} {uid}" if get_title(tei_doc) else os.path.basename(file_path).removesuffix(".xml")
             snippet_paths[uid] = {
                 "filepath": output_file_path.split("html/", 1)[1],
                 "sorting": sorting,
