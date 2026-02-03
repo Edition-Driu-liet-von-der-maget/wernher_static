@@ -1,47 +1,47 @@
 {
     "1": {
-        "filepath": "witness_snippets/E.snpt",
+        "filepath": "witness_snippets/W.snpt",
         "sorting": 1,
-        "title": "Title 1"
+        "title": "W (Zeuge) 1"
     },
     "2": {
-        "filepath": "witness_snippets/A.snpt",
+        "filepath": "witness_snippets/Notizen.snpt",
         "sorting": 2,
-        "title": "Title 2"
+        "title": "Notizen (Zeuge) 2"
     },
     "3": {
-        "filepath": "witness_snippets/G.snpt",
+        "filepath": "witness_snippets/F.snpt",
         "sorting": 3,
-        "title": "Title 3"
+        "title": "F (Zeuge) 3"
     },
     "4": {
-        "filepath": "witness_snippets/D.snpt",
+        "filepath": "witness_snippets/A.snpt",
         "sorting": 4,
-        "title": "Title 4"
+        "title": "A (Zeuge) 4"
     },
     "5": {
-        "filepath": "witness_snippets/W.snpt",
+        "filepath": "witness_snippets/C.snpt",
         "sorting": 5,
-        "title": "Title 5"
+        "title": "C (Zeuge) 5"
     },
     "6": {
-        "filepath": "witness_snippets/C.snpt",
+        "filepath": "witness_snippets/G.snpt",
         "sorting": 6,
-        "title": "Title 6"
+        "title": "G (Zeuge) 6"
     },
     "7": {
-        "filepath": "witness_snippets/Notizen.snpt",
+        "filepath": "witness_snippets/E.snpt",
         "sorting": 7,
-        "title": "Title 7"
+        "title": "E (Zeuge) 7"
     },
     "8": {
         "filepath": "witness_snippets/B.snpt",
         "sorting": 8,
-        "title": "Title 8"
+        "title": "B (Zeuge) 8"
     },
     "9": {
-        "filepath": "witness_snippets/F.snpt",
+        "filepath": "witness_snippets/D.snpt",
         "sorting": 9,
-        "title": "Title 9"
+        "title": "D (Zeuge) 9"
     }
 }
