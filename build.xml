@@ -14,10 +14,6 @@
     <delete>
         <fileset dir="${target}" includes="*.html"/>
     </delete>
-    <!-- copy files -->
-    <copy todir="${data_dir}">
-        <fileset dir="../initial_parsing/tei/" includes="*.xml"></fileset>
-    </copy>
     <xslt in="${index}" out="${target}/index.html" style="./xslt/index.xsl">
         <factory name="net.sf.saxon.TransformerFactoryImpl"/>
         <classpath location="${basedir}/saxon/saxon9he.jar"/>
