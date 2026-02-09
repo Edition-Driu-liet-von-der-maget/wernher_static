@@ -12,7 +12,7 @@ xsl_filepath = "./xslt/generate_snippets.xsl"
 output_dir = "./html/witness_snippets"
 docid_xpath = "//tei:witness[1]/@xml:id"
 doc_title_xpath = "//tei:title[1]/text()"
-sorting_xpath = None
+sorting_xpath = doc_title_xpath
 
 ###################
 # checks
