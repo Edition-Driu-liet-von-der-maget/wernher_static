@@ -90,10 +90,9 @@ class EditionManager {
   }
 
   eventTargetsWitnessContent(event) {
-    return (
-      event.target.matches(`.${this.config.textContentClass}`) ||
-      event.target.matches(`.${this.config.textContentClass} > *`)
-    );
+    // Any key event coming from inside a witness text container counts
+    // as "witness content" (not just the container itself or its direct children).
+    return !!event.target.closest(`.${this.config.textContentClass}`);
   }
 
   getNthSibling(textContentParent, currentElement, n) {
@@ -158,12 +157,14 @@ class EditionManager {
   }
 
   horizontalActionTrigger(event) {
-    return (
-      (event.key === "ArrowRight" || event.key === "ArrowLeft") &&
-      event.target.matches(
-        `.${this.config.textContentClass}, .${this.config.textContentClass} > *`
-      )
+    const isHorizontalKey =
+      event.key === "ArrowRight" || event.key === "ArrowLeft";
+    // Allow horizontal navigation as long as the event originates from
+    // somewhere inside a witness text container.
+    const inTextContent = !!event.target.closest(
+      `.${this.config.textContentClass}`
     );
+    return isHorizontalKey && inTextContent;
   }
 
   getDefaultElement() {
