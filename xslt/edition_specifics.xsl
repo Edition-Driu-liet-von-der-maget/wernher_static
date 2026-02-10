@@ -91,12 +91,12 @@
     <xsl:template match="tei:l">
         <div class="tei-line">
             <xsl:if test="@n">
-                <xsl:attribute name="data-n">
+                <xsl:attribute name="id">
                     <xsl:value-of select="@n"/>
                 </xsl:attribute>
             </xsl:if>
             <xsl:if test="@xml:id">
-                <xsl:attribute name="id">
+                <xsl:attribute name="data-n">
                     <xsl:value-of select="@xml:id"/>
                 </xsl:attribute>
             </xsl:if>
