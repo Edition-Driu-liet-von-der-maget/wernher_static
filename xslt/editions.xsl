@@ -12,6 +12,8 @@
     <xsl:import href="partials/html_footer.xsl"/>
     <xsl:import href="partials/blockquote.xsl"/>
     <xsl:import href="partials/zotero.xsl"/>
+    <!-- TEI-specific inline and structural rendering rules (verses, choices, ligatures, initials, etc.) -->
+    <xsl:import href="edition_specifics.xsl"/>
 
     <xsl:variable name="prev">
         <xsl:value-of select="replace(tokenize(data(tei:TEI/@prev), '/')[last()], '.xml', '.html')"/>
@@ -40,9 +42,9 @@
                     <xsl:with-param name="pageId" select="$link"></xsl:with-param>
                     <xsl:with-param name="zoteroTitle" select="$doc_title"></xsl:with-param>
                 </xsl:call-template>
-                <!-- Provide the names of the authors/editors of the current unit, ideally fetched from the data via xslt or hard coded as below -->
                 <meta name="citation_author" content="Foo, Bar"/>
                 <meta name="citation_author" content="Bar, Foo"/> 
+                <link rel="stylesheet" href="css/edition.css"/>
             </head>
             <body class="d-flex flex-column h-100">
                 <xsl:call-template name="nav_bar"/>

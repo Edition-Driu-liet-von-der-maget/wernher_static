@@ -1,0 +1,110 @@
+div.tei-line.tei-line-gap {
+    display: inline-block;
+    background-color: rgb(184, 184, 184);
+    padding: 0 0.5em;
+    border-radius: 0.25em;
+}
+div.tei-line.tei-line-gap:hover::after {
+    content: attr(data-missing-lines) " missing line(s)";
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 0.5em;
+    border-radius: 0.25em;
+    white-space: pre;
+    font-size: 0.75em;
+}
+
+/* --- Layout for the witness section and verse structure --- */
+
+/* Sub-groups (stanzas/sections) inside a witness */
+div.tei-lg.tei-lg-sub-group {
+    padding-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Sub-group label: aligned with witness text (no extra indent) */
+.tei-subgroup-label {
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    color: #333;
+}
+
+/* Sub-group body: indented block with a left border */
+.tei-subgroup-body {
+    margin-left: 1.5rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid #ddd;
+}
+
+/* Individual verse lines */
+div.tei-line {
+    position: relative;
+    padding-left: 3.5rem; /* space for line number */
+    line-height: 1.4;
+}
+
+/* Show the verse number from data-n in the left margin */
+div.tei-line::before {
+    content: attr(data-n);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3rem;
+    text-align: right;
+    margin-right: 0.5rem;
+    color: #888;
+    font-size: 0.8em;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Gap marker stays aligned with other lines */
+div.tei-line.tei-line-gap {
+    padding-left: 3.5rem;
+}
+
+/* --- Initials and rubrication --- */
+
+/* Decorated initials (including lombard initials) */
+span.tei-hi.tei-hi-initial,
+span.tei-hi.tei-hi-lombard {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #b30000; /* dark red */
+}
+
+/* Rubricated text */
+span.tei-hi.tei-hi-rubrication {
+    font-weight: 700;
+    color: #b30000; /* dark red */
+}
+
+/* --- Abbreviations and expansions (choice elements) --- */
+
+/* Abbreviation / superscript choices: original sign vs expanded reading */
+span.tei-choice-abbreviation span.tei-orig,
+span.tei-choice-superscript span.tei-orig {
+    font-weight: 600;
+}
+
+span.tei-choice-abbreviation span.tei-expan,
+span.tei-choice-superscript span.tei-expan {
+    color: #555;
+}
+
+/* Ligatures: emphasize that orig is a special glyph */
+span.tei-choice-ligature span.tei-orig,
+span.tei-choice-et-ligature span.tei-orig {
+    font-weight: 600;
+}
+
+span.tei-choice-ligature span.tei-reg,
+span.tei-choice-et-ligature span.tei-reg {
+    color: #555;
+}
+
+/* Superscript hi: render above baseline, smaller */
+span.tei-sup {
+    font-size: 0.7em;
+    vertical-align: super;
+}
