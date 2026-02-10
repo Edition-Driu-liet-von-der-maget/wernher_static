@@ -22,6 +22,43 @@
         - Inline highlights (<tei:hi>) become <span class="tei-hi ...">.
     -->
 
+    <!-- Witness-level group with collapsing of empty lines -->
+    <xsl:template match="tei:lg[@type='witness']">
+        <section class="tei-lg tei-lg-witness">
+            <xsl:if test="@n">
+                <xsl:attribute name="data-siglum">
+                    <xsl:value-of select="@n"/>
+                </xsl:attribute>
+            </xsl:if>
+            <xsl:for-each-group select="*" group-adjacent="if (self::tei:l and normalize-space(string-join(.//text(), '')) = '') then 'empty-l' else concat('other-', position())">
+                <xsl:choose>
+                    <xsl:when test="current-grouping-key() = 'empty-l'">
+                        <div class="tei-line tei-line-gap" data-missing-lines="{count(current-group())}">[…]</div>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="current-group()"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each-group>
+        </section>
+    </xsl:template>
+
+    <!-- Higher-level group (e.g. canto/section) with collapsing of empty lines -->
+    <xsl:template match="tei:lg[@type='group']">
+        <div class="tei-lg tei-lg-group">
+            <xsl:for-each-group select="*" group-adjacent="if (self::tei:l and normalize-space(string-join(.//text(), '')) = '') then 'empty-l' else concat('other-', position())">
+                <xsl:choose>
+                    <xsl:when test="current-grouping-key() = 'empty-l'">
+                        <div class="tei-line tei-line-gap" data-missing-lines="{count(current-group())}">[…]</div>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="current-group()"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each-group>
+        </div>
+    </xsl:template>
+
     <!-- Stanza / sub-group with collapsing of empty lines -->
     <xsl:template match="tei:lg[@type='sub_group']">
         <xsl:variable name="first-n" select="(tei:l/@n)[1]" as="xs:string?"/>
