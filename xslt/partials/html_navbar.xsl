@@ -28,7 +28,7 @@
                                 <a class="nav-link" href="toc.html">Editionseinheiten</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="column_viewer.html">Zeugen</a>
+                                <a class="nav-link" href="column_viewer.html">Textzeugensynopse</a>
                             </li>
                         </ul>
                     </div>
