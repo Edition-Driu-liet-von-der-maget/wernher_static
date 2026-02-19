@@ -46,7 +46,7 @@ div.tei-line {
 
 /* Show the verse number from data-n in the left margin */
 div.tei-line::before {
-    content: attr(data-n);
+    content: attr(id);
     position: absolute;
     left: 0;
     top: 0;
