@@ -90,8 +90,6 @@ class EditionManager {
   }
 
   eventTargetsWitnessContent(event) {
-    // Any key event coming from inside a witness text container counts
-    // as "witness content" (not just the container itself or its direct children).
     return !!event.target.closest(`.${this.config.textContentClass}`);
   }
 
@@ -159,8 +157,6 @@ class EditionManager {
   horizontalActionTrigger(event) {
     const isHorizontalKey =
       event.key === "ArrowRight" || event.key === "ArrowLeft";
-    // Allow horizontal navigation as long as the event originates from
-    // somewhere inside a witness text container.
     const inTextContent = !!event.target.closest(
       `.${this.config.textContentClass}`
     );
@@ -350,16 +346,42 @@ class EditionManager {
     this.initKeyDownListeners();
   }
 
+  async fetchWithRetry(url, options = {}, retries = 3, timeoutMs = 15000) {
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const response = await fetch(url, {
+          ...options,
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+        if (!response.ok) {
+          // HTTP error – retry unless this was the last attempt
+          if (attempt === retries) return null;
+        } else {
+          return response;
+        }
+      } catch (error) {
+        clearTimeout(timeoutId);
+        // Network/timeout error – retry unless this was the last attempt
+        if (attempt === retries) return null;
+      }
+    }
+    return null;
+  }
+
   async getSnippet(witnessId) {
     if (this.state.snippetsByLabels[witnessId]) {
       return this.state.snippetsByLabels[witnessId].cloneNode(true);
     }
     try {
-      const response = await fetch(
-        this.state.witness_metadata[witnessId].filepath
-      );
-      if (!response.ok) {
-        return `Resource '${this.state.witness_metadata[witnessId].filepath}' couldn't be loaded.`;
+      const filepath = this.state.witness_metadata[witnessId].filepath;
+      const response = await this.fetchWithRetry(filepath);
+      if (!response) {
+        const errorDiv = document.createElement("div");
+        errorDiv.textContent = `Resource '${filepath}' couldn't be loaded after multiple attempts.`;
+        return errorDiv;
       }
       const htmlText = await response.text();
       const snippetBody = new DOMParser().parseFromString(
@@ -369,8 +391,8 @@ class EditionManager {
       this.state.snippetsByLabels[witnessId] = snippetBody;
       return snippetBody.cloneNode(true);
     } catch (error) {
-      dummyDiv = document.createElement("div");
-      errorSpan = document.createElement("span");
+      const dummyDiv = document.createElement("div");
+      const errorSpan = document.createElement("span");
       errorSpan.textContent = `Resource '${this.state.witness_metadata[witnessId].filepath}' couldn't be loaded. ${error.message}`;
       dummyDiv.appendChild(errorSpan);
       return dummyDiv;
@@ -398,9 +420,9 @@ class EditionManager {
     return dropdown;
   }
 
-  createTextContentDiv(cssClass, witnessId) {
+  createTextContentDiv(witnessId) {
     const textContentDiv = document.createElement("div");
-    textContentDiv.className = `${this.config.textContentClass} ${cssClass}`;
+    textContentDiv.className = this.config.textContentClass;
     textContentDiv.setAttribute("role", "document");
     textContentDiv.setAttribute("tabindex", "0");
     textContentDiv.setAttribute(
@@ -433,19 +455,16 @@ class EditionManager {
   }
 
   createColumnHTML(columnId, witnessId) {
-    const cssClass = this.state.globalScroll
-      ? this.config.globalScrollClass
-      : this.config.individualScrollClass;
     const columnDiv = document.createElement("div");
     columnDiv.id = columnId;
-    columnDiv.className = `${this.config.witnessColumnClass} ${cssClass}`;
+    columnDiv.className = this.config.witnessColumnClass;
     columnDiv.setAttribute("role", "region");
     columnDiv.setAttribute(
       this.config.ariaLabelAttr,
       this.config.ariaColumnLabel(this.state.witness_metadata[witnessId].title)
     );
     columnDiv.appendChild(this.createControlsContainer(columnId, witnessId));
-    columnDiv.appendChild(this.createTextContentDiv(cssClass, witnessId));
+    columnDiv.appendChild(this.createTextContentDiv(witnessId));
     return columnDiv;
   }
 
@@ -461,7 +480,6 @@ class EditionManager {
       .getAllColumns()
       .map((col) => this.renderColumn(col.id));
     await Promise.all(renderPromises);
-    this.applyScrollSettings();
     this.applyVisibilitySettings();
   }
 
@@ -470,7 +488,6 @@ class EditionManager {
     if (!col) return;
     const snippetBody = await this.getSnippet(col.witnessId);
     this.updateColumnContent(col.id, snippetBody);
-    this.applyScrollSettings(columnId);
     this.applyVisibilitySettings(columnId);
   }
 
@@ -518,17 +535,6 @@ class EditionManager {
       this.state.sortedWitnessIds[this.state.columnCount] ||
       this.state.sortedWitnessIds[0];
     await this.addColumn(witnessId);
-    this.updateUrlWithState();
-  }
-
-  toggleScrollingBehaviour() {
-    this.state.globalScroll = !this.state.globalScroll;
-    this.applyScrollSettings();
-    this.sendAriaMessage(
-      `Global, parallel scrolling of all witnesses is now ${
-        this.state.globalScroll ? "enabled" : "disabled"
-      }.`
-    );
     this.updateUrlWithState();
   }
 
@@ -618,32 +624,6 @@ class EditionManager {
       });
   }
 
-  applyScrollSettings(columnId = null) {
-    if (columnId) {
-      const columnElement = document.getElementById(columnId);
-      if (columnElement) {
-        const textContent = columnElement.querySelector(
-          `.${this.config.textContentClass}`
-        );
-        this.toggleScrollClass(textContent, this.state.globalScroll);
-        this.toggleScrollClass(columnElement, this.state.globalScroll);
-      }
-    } else {
-      const text_contents = this.witnessContainer.getElementsByClassName(
-        this.config.textContentClass
-      );
-      const witnesses = this.witnessContainer.getElementsByClassName(
-        this.config.witnessColumnClass
-      );
-      for (const text_content of text_contents) {
-        this.toggleScrollClass(text_content, this.state.globalScroll);
-      }
-      for (const witness of witnesses) {
-        this.toggleScrollClass(witness, this.state.globalScroll);
-      }
-    }
-  }
-
   applyVisibilitySettings(columnId = null) {
     if (columnId) {
       const columnElement = document.getElementById(columnId);
@@ -664,16 +644,6 @@ class EditionManager {
         this.setGlobalLinecounterVisibility(text_content);
         this.setLocalLinecounterVisibility(text_content);
       }
-    }
-  }
-
-  toggleScrollClass(element, globalScroll) {
-    if (element) {
-      element.classList.toggle(
-        this.config.individualScrollClass,
-        !globalScroll
-      );
-      element.classList.toggle(this.config.globalScrollClass, globalScroll);
     }
   }
 

@@ -12,14 +12,14 @@ xsl_filepath = "./xslt/generate_snippets.xsl"
 output_dir = "./html/witness_snippets"
 docid_xpath = "//tei:witness[1]/@xml:id"
 doc_title_xpath = "//tei:title[1]/text()"
-sorting_xpath = doc_title_xpath
+sorting_xpath = None
 
 ###################
 # checks
 ###################
 
-# with PySaxonProcessor(license=False) as proc:
-#     print(f"using {proc.version}")
+with PySaxonProcessor(license=False) as proc:
+    print(f"using {proc.version}")
 
 os.makedirs(os.path.dirname(output_dir), exist_ok=True)
 
@@ -30,7 +30,9 @@ c = 0
 
 def get_outputfile(input_path: str, output_dir: str) -> str:
     filename = os.path.basename(input_path).removesuffix(".xml")
-    return os.path.join(output_dir, filename) + ".snpt"
+    output_path = os.path.join(output_dir, filename) + ".html"
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    return output_path
 
 
 def get_title(doc: TeiReader):
@@ -67,7 +69,6 @@ def xslt(in_xml_dir_glob: list, xsl_path: str, output_dir) -> dict:
         xsltproc = proc.new_xslt30_processor()
         executable = xsltproc.compile_stylesheet(stylesheet_file=xsl_path)
         for file_path in glob.glob(in_xml_dir_glob):
-            # get filename without path and suffix
             print(file_path)
             document = proc.parse_xml(xml_uri=file_path)
             output_file_path = get_outputfile(file_path, output_dir)
@@ -75,7 +76,7 @@ def xslt(in_xml_dir_glob: list, xsl_path: str, output_dir) -> dict:
             tei_doc = TeiReader(file_path)
             uid = get_uid(tei_doc)
             sorting = get_sorting(tei_doc)
-            title = f"{get_title(tei_doc)} {uid}" if get_title(tei_doc) else os.path.basename(file_path).removesuffix(".xml")
+            title = f"{get_title(tei_doc)} {uid}"
             snippet_paths[uid] = {
                 "filepath": output_file_path.split("html/", 1)[1],
                 "sorting": sorting,
@@ -92,6 +93,10 @@ def log_snippetpaths(file_paths: dict, json_file_path: str):
         json.dump(file_paths, json_file, indent=4)
         print(f"logged to {json_file_path}")
 
+def clear_snippet_dir():
+    for file in glob.glob(os.path.join(output_dir, "*")):
+        os.remove(file)
 
+clear_snippet_dir()
 snippet_paths = xslt(in_xml_dir_glob, xsl_filepath, output_dir)
 log_snippetpaths(snippet_paths, output_dir + "/snippet_paths.json")

@@ -1,12 +1,22 @@
 /* rather non specific styles */
 html,
-body,
-main {
+body {
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
-    overflow: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden; /* prevent page scroll; viewer scrolls inside */
     display: flex;
     flex-direction: column;
 }
@@ -80,7 +90,7 @@ div.synTexView_controls {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 100;
     padding: 10px;
-    min-width: 200px;
+    min-width: 12.5rem; /* 200px at 16px root */
 }
 
 div.synTexView_controls.open {
@@ -92,7 +102,7 @@ div.synTexView_controls.open {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 100;
     padding: 10px;
-    min-width: 200px;
+    min-width: 12.5rem; /* 200px at 16px root */
 }
 
 div.synTexView_controls.open div {
@@ -125,28 +135,25 @@ div.synTexView_controls.open div button:focus {
 
 #synTexView-witness-container {
     margin: .3rem;
-    display: inline-flex;
-    flex-direction: row;
-    /* Arrange children in a row */
-    flex-wrap: nowrap;
-    /* Prevent wrapping */
-    gap: 0.75rem;
-    /* Add spacing between children */
+    display: flex;
+    flex-direction: row; /* Arrange children in a row */
+    flex-wrap: nowrap;   /* Prevent wrapping */
+    gap: 0.75rem;        /* Add spacing between children */
     padding-bottom: 1rem;
     align-items: stretch;
-    white-space: nowrap;
-    /* Prevent children from wrapping */
-    width: auto;
-    /* Ensure the width adjusts to fit children */
-    height: 100%;
-    overflow-x: auto;
-    overflow-y: auto;
-    height: 100% !
+    white-space: nowrap; /* Prevent children from wrapping */
+    width: 100%;         /* Take full available width */
+    flex: 1 1 auto;      /* Use remaining height in main */
+    min-height: 0;       /* Allow shrinking with flex */
+    overflow-x: auto;    /* horizontal scroll for columns */
+    overflow-y: hidden;  /* no vertical scroll here; only in text */
 }
 
 .synTexView-witness {
     position: relative;
-    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;       /* width determined by content/min-width; scroll horizontally */
     min-width: 30rem;
     max-width: fit-content;
     width: auto;
@@ -165,28 +172,9 @@ div.synTexView_controls.open div button:focus {
     overflow-wrap: break-word;
 }
 
-.synTexView-witness.synTexView-scroll-individual {
-    height: 100%;
-}
-
-.synTexView-witness.synTexView-scroll-global {
-    height: fit-content;
-}
-
 .synTexView-controls-container {
     height: 2.5rem;
-}
-
-.synTexView-text-content.synTexView-scroll-individual {
-    overflow-y: auto;
-    height: calc(100% - 2rem);
-    padding-top: 10rem;
-    padding-bottom: 20rem;
-    box-sizing: border-box;
-}
-
-.synTexView-text-content.synTexView-scroll-global {
-    height: fit-content;
+    flex: 0 0 auto; /* header takes only needed height */
 }
 
 #columnControls {
@@ -217,22 +205,6 @@ div.synTexView_controls.open div button:focus {
     margin-left: auto;
     /* Push the button to the right */
 }
-
-/* .synTexView-col-switch {
-    padding: 5px 20px 5px 10px;
-    font-size: 14px;
-} */
-
-/* .synTexView-column-button {
-    padding: 5px 20px 5px 10px;
-    font-size: 14px;
-    cursor: pointer;
-    border: 1px solid #999;
-    border-radius: 3px;
-    margin: 0;
-    text-align: center;
-    width: 10px;
-} */
 
 .synTexView-init {
     color: red;
@@ -300,6 +272,16 @@ button.synTexView-remove-column {
     display: none !important;
 }
 
+.synTexView-text-content {
+    overflow-y: auto;
+    flex: 1 1 auto;   /* fill remaining column height */
+    min-height: 0;    /* allow shrinking when zooming */
+    max-height: 100%; /* never exceed column height */
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    box-sizing: border-box;
+}
+
 .synTexView-text-content:focus {
     outline: 2px solid grey !important;
 }
@@ -327,7 +309,7 @@ button.synTexView-remove-column {
 }
 
 @media (max-width: 800px) {
-    .synTexView-text-content.synTexView-scroll-individual {
+    .synTexView-text-content{
         padding-top: 2rem;
         padding-bottom: 2rem;
     }
