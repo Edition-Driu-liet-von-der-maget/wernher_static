@@ -94,13 +94,20 @@ class EditionManager {
   }
 
   getNthSibling(textContentParent, currentElement, n) {
-    const siblings = Array.from(
-      textContentParent.querySelectorAll(`.${this.config.witnessLineClass}`)
-    ).filter((el) => this.elementIsVisible(el));
-    const rawIndex = Array.prototype.indexOf.call(siblings, currentElement) + n;
-    const newIndex = Math.max(0, Math.min(rawIndex, siblings.length - 1));
-    const sibling = siblings ? siblings[newIndex] : null;
-    return sibling;
+    if (n === 0 || !currentElement) return currentElement;
+    const prop = n > 0 ? "nextElementSibling" : "previousElementSibling";
+    let steps = Math.abs(n);
+    let current = currentElement;
+    while (steps > 0) {
+      let next = current[prop];
+      while (next && !this.elementIsVisible(next)) {
+        next = next[prop];
+      }
+      if (!next) break;
+      current = next;
+      steps--;
+    }
+    return current;
   }
 
   arrowDownAction(event, step = 1) {
@@ -235,6 +242,9 @@ class EditionManager {
       if (diff < minDiff) {
         minDiff = diff;
         closestLine = child;
+      } else {
+        // Visible elements are in DOM order; once diff increases, stop early
+        break;
       }
     }
     return closestLine;
@@ -488,7 +498,6 @@ class EditionManager {
     if (!col) return;
     const snippetBody = await this.getSnippet(col.witnessId);
     this.updateColumnContent(col.id, snippetBody);
-    this.applyVisibilitySettings(columnId);
   }
 
   addColumnContainer(witnessId) {
@@ -513,7 +522,7 @@ class EditionManager {
     const oldColumnId = this.getOneIndexByColumnId(columnId);
     this.state.removeColumn(columnId);
     const colElem = document.getElementById(columnId);
-    this.columnElements.pop(colElem);
+    this.columnElements = this.columnElements.filter((el) => el.id !== columnId);
     if (colElem) colElem.remove();
     this.sendAriaMessage(
       `Column ${oldColumnId} removed. ${this.state.columnCount} columns remaining.`
@@ -586,76 +595,30 @@ class EditionManager {
     }
   }
 
-  setEmptyLinesVisibility(textContentElement) {
-    if (!textContentElement) return;
-    textContentElement
-      .querySelectorAll(
-        `.${this.config.witnessLineClass}.${this.config.omittedLineClass}`
-      )
-      .forEach((line) => {
-        line.classList.toggle(
-          this.config.hiddenElementClass,
-          !this.state.displayEmptyLines
-        );
-      });
-  }
-
-  setGlobalLinecounterVisibility(textContentElement) {
-    if (!textContentElement) return;
-    textContentElement
-      .querySelectorAll(`.${this.config.globalLineNumberClass}`)
-      .forEach((line) => {
-        line.classList.toggle(
-          this.config.hiddenElementClass,
-          !this.state.displayLinenrGlobal
-        );
-      });
-  }
-
-  setLocalLinecounterVisibility(textContentElement) {
-    if (!textContentElement) return;
-    textContentElement
-      .querySelectorAll(`.${this.config.localLineNumberClass}`)
-      .forEach((line) => {
-        line.classList.toggle(
-          this.config.hiddenElementClass,
-          !this.state.displayLinenrLocal
-        );
-      });
-  }
-
-  applyVisibilitySettings(columnId = null) {
-    if (columnId) {
-      const columnElement = document.getElementById(columnId);
-      if (columnElement) {
-        const textContent = columnElement.querySelector(
-          `.${this.config.textContentClass}`
-        );
-        this.setEmptyLinesVisibility(textContent);
-        this.setGlobalLinecounterVisibility(textContent);
-        this.setLocalLinecounterVisibility(textContent);
-      }
-    } else {
-      const text_contents = this.witnessContainer.getElementsByClassName(
-        this.config.textContentClass
-      );
-      for (const text_content of text_contents) {
-        this.setEmptyLinesVisibility(text_content);
-        this.setGlobalLinecounterVisibility(text_content);
-        this.setLocalLinecounterVisibility(text_content);
-      }
-    }
+  applyVisibilitySettings() {
+    this.witnessContainer.classList.toggle(
+      this.config.hideEmptyLinesClass,
+      !this.state.displayEmptyLines
+    );
+    this.witnessContainer.classList.toggle(
+      this.config.hideGlobalLinenrClass,
+      !this.state.displayLinenrGlobal
+    );
+    this.witnessContainer.classList.toggle(
+      this.config.hideLocalLinenrClass,
+      !this.state.displayLinenrLocal
+    );
   }
 
   elementIsVisible(element) {
+    if (!element.hasAttribute("id")) return false;
     if (
-      !element.classList.contains(this.config.hiddenElementClass) &&
-      element.hasAttribute("id")
+      !this.state.displayEmptyLines &&
+      element.classList.contains(this.config.omittedLineClass)
     ) {
-      return true;
-    } else {
       return false;
     }
+    return true;
   }
 
   getFirstVisibleChildInContainer(container) {
@@ -885,45 +848,54 @@ class EditionManager {
   }
 
   async initColumns(witnessIdsFromUrl) {
-    let columnIds = [];
+    let witnessIds = [];
     if (witnessIdsFromUrl) {
-      // the witness ids and the column ids are already defined by the url
-      // we need to load them
-      for (const witnessId of witnessIdsFromUrl) {
-        if (this.state.witness_metadata[witnessId]) {
-          const columnId = this.addColumnContainer(witnessId);
-          columnIds.push(columnId);
-        } else {
-          console.warn(
-            `Witness ID from URL not found in metadata: ${witnessId}`
-          );
-        }
-      }
-    } else if (this.config.fetchAllWitnesses) {
-      for (const witnessId of this.state.sortedWitnessIds) {
-        const columnId = this.addColumnContainer(witnessId);
-        columnIds.push(columnId);
-      }
-    } else {
-      for (let i = 1; i <= this.config.defaultNumberOfColumns; i++) {
-        const witnessId = this.state.sortedWitnessIds[i - 1];
-        if (witnessId) {
-          const columnId = this.addColumnContainer(witnessId);
-          columnIds.push(columnId);
-        }
-      }
-    }
-    await Promise.all(columnIds.map((id) => this.renderColumn(id)));
-    this.sendAriaMessage(
-      `Initialized ${this.state.columnCount} columns with witnesses.`
-    );
-    this.state.columns.forEach((col, index) => {
-      this.sendAriaMessage(
-        `Column ${index + 1} for ${
-          this.state.witness_metadata[col.witnessId].title
-        } initialized.`
+      witnessIds = witnessIdsFromUrl.filter(
+        (id) => this.state.witness_metadata[id]
       );
+      const invalid = witnessIdsFromUrl.filter(
+        (id) => !this.state.witness_metadata[id]
+      );
+      invalid.forEach((id) =>
+        console.warn(`Witness ID from URL not found in metadata: ${id}`)
+      );
+    } else if (this.config.fetchAllWitnesses) {
+      witnessIds = this.state.sortedWitnessIds;
+    } else {
+      witnessIds = this.state.sortedWitnessIds.slice(
+        0,
+        this.config.defaultNumberOfColumns
+      );
+    }
+
+    // Batch DOM insertions via DocumentFragment
+    const fragment = document.createDocumentFragment();
+    const columnIds = witnessIds.map((witnessId) => {
+      const columnId = this.state.addColumn(witnessId);
+      const columnElement = this.createColumnHTML(columnId, witnessId);
+      fragment.appendChild(columnElement);
+      this.columnElements.push(columnElement);
+      return columnId;
     });
+    this.witnessContainer.appendChild(fragment);
+
+    // Fetch and render all columns in parallel
+    await Promise.all(columnIds.map((id) => this.renderColumn(id)));
+    this.applyVisibilitySettings();
+
+    // Single batched aria message instead of N+1 messages
+    const columnSummary = this.state.columns
+      .map(
+        (col, i) =>
+          `Column ${i + 1}: ${
+            this.state.witness_metadata[col.witnessId].title
+          }`
+      )
+      .join(". ");
+    this.sendAriaMessage(
+      `Initialized ${this.state.columnCount} columns. ${columnSummary}.`
+    );
+
     if (this.state.lastDoubleClickedElementId) {
       const lastDoubleClickedSpan = document.getElementById(
         this.state.lastDoubleClickedElementId
@@ -965,8 +937,8 @@ class EditionManager {
       document.body.appendChild(notification);
       this.sendAriaMessage(this.config.copyUrlNotificationLabel);
       setTimeout(() => {
-        notification.style.opacity = "4";
-        setTimeout(() => notification.remove(), 200);
+        notification.style.opacity = "0";
+        setTimeout(() => notification.remove(), 2000);
       }, 1500);
     } catch (err) {
       alert("Failed to copy URL: " + err);

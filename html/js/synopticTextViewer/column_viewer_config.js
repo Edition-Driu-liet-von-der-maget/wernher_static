@@ -53,6 +53,9 @@ class ColumnViewerConfig {
   controlsContainerTogglerClass = "synTexView_controls_toggle";
   controlsContainerClass = "synTexView_controls";
   copyUrlNotificationClass = "synTexView-url-copy-notification";
+  hideEmptyLinesClass = "synTexView-hide-empty-lines";
+  hideGlobalLinenrClass = "synTexView-hide-global-linenr";
+  hideLocalLinenrClass = "synTexView-hide-local-linenr";
 
   // ===========================================================================
   // ARIA LABELS

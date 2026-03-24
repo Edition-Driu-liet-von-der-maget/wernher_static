@@ -49,12 +49,7 @@ span.editorial_note {
     display: none;
 }
 
-div {
-    box-sizing: border-box;
-}
-
 /* Synoptic Text Viewer specific styles */
-/* as you can see, you might have to adjust the styles/scopes for specific elements */
 div {
     box-sizing: border-box;
 }
@@ -62,7 +57,6 @@ div {
 div.synTexView_controls_wrapper {
     position: relative;
     display: inline-block;
-    /* Ensure it fits the width of its content */
     margin-bottom: 1rem;
     margin-top: 2rem;
     margin-left: 0.3rem;
@@ -82,7 +76,6 @@ button.synTexView_controls_toggle {
 
 div.synTexView_controls {
     display: none;
-    /* Hidden by default */
     position: absolute;
     top: 100%;
     left: 0;
@@ -90,26 +83,18 @@ div.synTexView_controls {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 100;
     padding: 10px;
-    min-width: 12.5rem; /* 200px at 16px root */
+    min-width: 12.5rem;
 }
 
 div.synTexView_controls.open {
     display: block;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    z-index: 100;
-    padding: 10px;
-    min-width: 12.5rem; /* 200px at 16px root */
 }
 
 div.synTexView_controls.open div {
     padding: 0.5rem;
     display: flex;
     flex-direction: row;
-    justify-content: flex-start; /* Align buttons to the left */
+    justify-content: flex-start;
     align-items: center;
 }
 
@@ -124,7 +109,6 @@ div.synTexView_controls.open div button {
     transition: background 0.2s, border 0.2s;
     display: inline-block;
     user-select: none;
-    position: relative;
 }
 
 div.synTexView_controls.open div button:hover,
@@ -136,24 +120,37 @@ div.synTexView_controls.open div button:focus {
 #synTexView-witness-container {
     margin: .3rem;
     display: flex;
-    flex-direction: row; /* Arrange children in a row */
-    flex-wrap: nowrap;   /* Prevent wrapping */
-    gap: 0.75rem;        /* Add spacing between children */
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0.75rem;
     padding-bottom: 1rem;
     align-items: stretch;
-    white-space: nowrap; /* Prevent children from wrapping */
-    width: 100%;         /* Take full available width */
-    flex: 1 1 auto;      /* Use remaining height in main */
-    min-height: 0;       /* Allow shrinking with flex */
-    overflow-x: auto;    /* horizontal scroll for columns */
-    overflow-y: hidden;  /* no vertical scroll here; only in text */
+    white-space: nowrap;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* Container-level visibility toggles (avoids per-element DOM iteration) */
+#synTexView-witness-container.synTexView-hide-empty-lines .synTexView-line.synTexView-omitted {
+    display: none !important;
+}
+
+#synTexView-witness-container.synTexView-hide-global-linenr .synTexView-linenr-global {
+    display: none !important;
+}
+
+#synTexView-witness-container.synTexView-hide-local-linenr .synTexView-linenr-local {
+    display: none !important;
 }
 
 .synTexView-witness {
     position: relative;
     display: flex;
     flex-direction: column;
-    flex: 0 0 auto;       /* width determined by content/min-width; scroll horizontally */
+    flex: 0 0 auto;
     min-width: 30rem;
     max-width: fit-content;
     width: auto;
@@ -164,6 +161,7 @@ div.synTexView_controls.open div button:focus {
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 0.5rem 1rem;
+    contain: layout style;
 }
 
 .synTexView-witness h4 {
@@ -174,48 +172,20 @@ div.synTexView_controls.open div button:focus {
 
 .synTexView-controls-container {
     height: 2.5rem;
-    flex: 0 0 auto; /* header takes only needed height */
-}
-
-#columnControls {
-    margin: 20px 0;
+    flex: 0 0 auto;
     display: flex;
-    gap: 0;
-}
-
-.controlls-container {
-    display: flex;
-    flex-wrap: wrap;
-    /* Allow wrapping to the next row */
-    justify-content: space-between;
-    /* Space between dropdown and button */
     align-items: center;
-    /* Align items vertically */
-    margin-bottom: 10px;
-    position: sticky;
-    /* Make it sticky */
-    top: 0;
-    /* Stick to the top */
-    z-index: 20;
-    /* Ensure it stays above other elements */
     padding-top: .5rem;
 }
 
-.controlls-container .synTexView-remove-column {
+.synTexView-controls-container .synTexView-remove-column {
     margin-left: auto;
-    /* Push the button to the right */
-}
-
-.synTexView-init {
-    color: red;
-    font-size: 120%;
 }
 
 span.synTexView-line {
     display: block;
     width: 100%;
     white-space: normal !important;
-
 }
 
 span.synTexView-line:hover {
@@ -246,14 +216,6 @@ span.synTexView-highlight.synTexView-neighbor {
     display: inline-block;
 }
 
-.synTexView-last .synTexView-linenr-global {
-    color: orange;
-}
-
-/* .line-synTexView-highlight {
-    background-color: rgba(255, 204, 153, 0.4);
-} */
-
 button.synTexView-remove-column {
     position: sticky;
     background-color: white;
@@ -274,12 +236,13 @@ button.synTexView-remove-column {
 
 .synTexView-text-content {
     overflow-y: auto;
-    flex: 1 1 auto;   /* fill remaining column height */
-    min-height: 0;    /* allow shrinking when zooming */
-    max-height: 100%; /* never exceed column height */
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
     padding-top: 3rem;
     padding-bottom: 3rem;
     box-sizing: border-box;
+    contain: content;
 }
 
 .synTexView-text-content:focus {
@@ -298,12 +261,11 @@ button.synTexView-remove-column {
     background: rgba(60,60,60,0.95);
     color: #fff;
     padding: 0.75em 2em;
-    /* border-radius: 0 0 8px 8px; */
     border-radius: 8px;
     font-size: 1.1em;
     z-index: 9999;
-    pointer-events: none; /* Prevent interaction */
-    user-select: none;    /* Prevent selection */
+    pointer-events: none;
+    user-select: none;
     opacity: 1;
     transition: opacity 2s;
 }
