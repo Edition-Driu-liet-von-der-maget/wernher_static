@@ -95,14 +95,29 @@ class EditionManager {
 
   getNthSibling(textContentParent, currentElement, n) {
     if (n === 0 || !currentElement) return currentElement;
-    const prop = n > 0 ? "nextElementSibling" : "previousElementSibling";
+    const lineClass = this.config.witnessLineClass;
+    // TreeWalker traverses across nesting levels (e.g. <p> wrappers from tei:lg)
+    const walker = document.createTreeWalker(
+      textContentParent,
+      NodeFilter.SHOW_ELEMENT,
+      {
+        acceptNode: (node) => {
+          if (!node.classList.contains(lineClass)) {
+            return NodeFilter.FILTER_SKIP;
+          }
+          return this.elementIsVisible(node)
+            ? NodeFilter.FILTER_ACCEPT
+            : NodeFilter.FILTER_REJECT;
+        },
+      }
+    );
+    walker.currentNode = currentElement;
+    const stepFn =
+      n > 0 ? () => walker.nextNode() : () => walker.previousNode();
     let steps = Math.abs(n);
     let current = currentElement;
     while (steps > 0) {
-      let next = current[prop];
-      while (next && !this.elementIsVisible(next)) {
-        next = next[prop];
-      }
+      const next = stepFn();
       if (!next) break;
       current = next;
       steps--;
