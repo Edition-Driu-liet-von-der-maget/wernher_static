@@ -87,6 +87,7 @@
         <include name="*.html"/>
         <replacetoken>xmlns="http://www.w3.org/1999/xhtml"</replacetoken>
     </replace>
+    <replace file="${target}/js/search.js" token="TYPESENSE_API_KEY_PLACEHOLDER" value="${env.TYPESENSE_API_KEY}" />
     <exec executable="python3">
         <arg value="pyscripts/make_snippets.py" />
     </exec>
