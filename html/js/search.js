@@ -1,6 +1,6 @@
 const indexName = "wernher_static_";
 
-const apiKey = "TYPESENSE_API_KEY_PLACEHOLDER"; // Will be replaced during build
+const apiKey = "${env.TYPESENSE_API_KEY}"; // Will be replaced during build
 
 const typesenseInstantsearchAdapter = new TypesenseInstantSearchAdapter({
   server: {
