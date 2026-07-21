@@ -1,3 +1,7 @@
 acdh-tei-pyutils
 acdh-cfts-pyutils
 jinja2
+acdh-tei-pyutils
+acdh-cfts-pyutils
+jinja2
+saxonche
