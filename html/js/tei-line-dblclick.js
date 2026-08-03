@@ -32,7 +32,7 @@
       return;
     }
 
-    document.addEventListener('click', function (event) {
+    document.addEventListener('dblclick', function (event) {
       var lineEl = event.target.closest('.tei-line');
       if (!lineEl) {
         return;
