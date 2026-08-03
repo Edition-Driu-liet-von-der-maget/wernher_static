@@ -80,6 +80,10 @@ function addButton(containerId, text, onClick, ariaLabel, config) {
   container.appendChild(button);
 }
 function setupControlsMenuEvents(toggle, controls, config, menuItems) {
+  const mobileMaxWidthPx = config.mobileMaxWidthPx || 800;
+  const isInlineControlsMode = () =>
+    window.matchMedia(`(min-width: ${mobileMaxWidthPx + 1}px)`).matches;
+
   toggle.setAttribute("aria-haspopup", "true");
   toggle.setAttribute(config.controlsContainerAriaExpandedAttr, "false");
   toggle.setAttribute(
@@ -101,7 +105,7 @@ function setupControlsMenuEvents(toggle, controls, config, menuItems) {
   };
 
   const openMenu = () => {
-    if (!controls) return;
+    if (!controls || isInlineControlsMode()) return;
     controls.classList.add(config.controlsContainerOpenClass);
     toggle.setAttribute(config.controlsContainerAriaExpandedAttr, "true");
     if (menuItems && menuItems.length > 0) {
@@ -110,7 +114,7 @@ function setupControlsMenuEvents(toggle, controls, config, menuItems) {
   };
 
   const closeMenu = (returnFocus = true) => {
-    if (!controls) return;
+    if (!controls || isInlineControlsMode()) return;
     if (!controls.classList.contains(config.controlsContainerOpenClass)) {
       return;
     }
@@ -118,6 +122,31 @@ function setupControlsMenuEvents(toggle, controls, config, menuItems) {
     toggle.setAttribute(config.controlsContainerAriaExpandedAttr, "false");
     if (returnFocus) {
       toggle.focus();
+    }
+  };
+
+  const applyControlsKeyboardMode = () => {
+    const inlineMode = isInlineControlsMode();
+    if (inlineMode) {
+      toggle.setAttribute("aria-hidden", "true");
+      toggle.tabIndex = -1;
+      if (menuItems && menuItems.length > 0) {
+        menuItems.forEach((item) => {
+          item.tabIndex = 0;
+        });
+      }
+      controls.classList.remove(config.controlsContainerOpenClass);
+      toggle.setAttribute(config.controlsContainerAriaExpandedAttr, "false");
+    } else {
+      toggle.removeAttribute("aria-hidden");
+      toggle.tabIndex = 0;
+      if (controls.classList.contains(config.controlsContainerOpenClass)) {
+        updateRovingTabindex(currentIndex || 0);
+      } else if (menuItems && menuItems.length > 0) {
+        menuItems.forEach((item) => {
+          item.tabIndex = -1;
+        });
+      }
     }
   };
 
@@ -131,6 +160,7 @@ function setupControlsMenuEvents(toggle, controls, config, menuItems) {
   });
 
   document.addEventListener("click", (e) => {
+    if (isInlineControlsMode()) return;
     if (!controls.contains(e.target) && !toggle.contains(e.target)) {
       closeMenu(false);
     }
@@ -148,7 +178,11 @@ function setupControlsMenuEvents(toggle, controls, config, menuItems) {
 
   if (controls && menuItems && menuItems.length > 0) {
     controls.addEventListener("keydown", (e) => {
-      if (!controls.classList.contains(config.controlsContainerOpenClass)) {
+      const inlineMode = isInlineControlsMode();
+      if (
+        !inlineMode &&
+        !controls.classList.contains(config.controlsContainerOpenClass)
+      ) {
         return;
       }
       let handled = false;
@@ -166,7 +200,9 @@ function setupControlsMenuEvents(toggle, controls, config, menuItems) {
         handled = true;
       } else if (e.key === "Tab") {
         // Leaving the menu with Tab should also close it
-        closeMenu(false);
+        if (!inlineMode) {
+          closeMenu(false);
+        }
       }
       if (handled) {
         e.preventDefault();
@@ -176,6 +212,12 @@ function setupControlsMenuEvents(toggle, controls, config, menuItems) {
 
     menuItems.forEach((item, index) => {
       item.addEventListener("focus", () => {
+        if (isInlineControlsMode()) {
+          menuItems.forEach((el) => {
+            el.tabIndex = 0;
+          });
+          return;
+        }
         currentIndex = index;
         menuItems.forEach((el, i) => {
           el.tabIndex = i === index ? 0 : -1;
@@ -183,6 +225,9 @@ function setupControlsMenuEvents(toggle, controls, config, menuItems) {
       });
     });
   }
+
+  applyControlsKeyboardMode();
+  window.addEventListener("resize", applyControlsKeyboardMode);
 }
 
 function createControls(config, manager) {
@@ -242,14 +287,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // failed to load the witness metadata
     const errorDiv = document.createElement("div");
     errorDiv.textContent = "Error: Could not load edition metadata. Please check your connection or try again later. If this issue persists, please contact the responsible team.";
-    errorDiv.style.color = "red";
-    errorDiv.style.fontWeight = "bold";
-    errorDiv.style.margin = "1rem";
+    errorDiv.className = "text-red-600 font-bold m-4";
     document.body.prepend(errorDiv);
     const retryBtn = document.createElement("button");
     retryBtn.textContent = "Retry";
     retryBtn.onclick = () => window.location.reload();
-    retryBtn.style.marginLeft = "1rem";
+    retryBtn.className = "ml-4 px-3 py-1 border border-gray-400 rounded text-sm hover:bg-gray-100";
     errorDiv.appendChild(retryBtn);
     return; // Stop further initialization
   }
@@ -264,4 +307,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const manager = new EditionManager(state, config);
   await manager.initColumns(stateFromUrl.witnessIds);
   createControls(config, manager);
+  manager.updateMobileUiControls();
+  window.addEventListener("resize", () => manager.updateMobileUiControls());
 });

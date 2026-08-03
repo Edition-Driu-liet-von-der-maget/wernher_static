@@ -13,6 +13,21 @@ class EditionManager {
     this.initListeners();
   }
 
+  isMobileView() {
+    const mobileMaxWidthPx = this.config.mobileMaxWidthPx || 800;
+    return window.matchMedia(`(max-width: ${mobileMaxWidthPx}px)`).matches;
+  }
+
+  updateMobileUiControls() {
+    const addButtonContainer = document.getElementById(this.config.addColumnButtonId);
+    if (!addButtonContainer) return;
+    const addButton = addButtonContainer.querySelector("button");
+    if (!addButton) return;
+    const isMobile = this.isMobileView();
+    addButton.disabled = isMobile;
+    addButton.style.display = isMobile ? "none" : "";
+  }
+
   getReloadAttemptStorageKey() {
     return `synTexViewReloadAttempts:${window.location.pathname}${window.location.search}`;
   }
@@ -340,8 +355,14 @@ class EditionManager {
         ).id;
         this.removeColumn(columnId);
         this.updateUrlWithState();
-      } else if (event.target.matches(`.${this.config.witnessLineClass}`)) {
+      } else {
         const line = event.target.closest(`.${this.config.witnessLineClass}`);
+        if (!line) return;
+        if (this.isMobileView()) {
+          // On mobile, a single tap should act like desktop double-click.
+          this.syncVerticalScrolling(line);
+          return;
+        }
         const textContentParent = this.getTextContentParent(line);
         this.updateFocusState(line, textContentParent);
       }
@@ -539,8 +560,45 @@ class EditionManager {
   }
 
   async updateColumnWitness(columnId, witnessId) {
+    const columnElementBeforeUpdate = document.getElementById(columnId);
+    const textContentBeforeUpdate = columnElementBeforeUpdate
+      ? columnElementBeforeUpdate.querySelector(`.${this.config.textContentClass}`)
+      : null;
+    const selectedElement = this.state.getCurrentSelectedElement();
+    const selectedElementId = selectedElement
+      ? selectedElement.getAttribute("id")
+      : null;
+    const selectedWitness = this.state.getCurrentSelectedWitness();
+    const shouldRestoreFocusInUpdatedColumn =
+      !!selectedElementId &&
+      !!textContentBeforeUpdate &&
+      selectedWitness === textContentBeforeUpdate;
+
     this.state.updateColumnWitness(columnId, witnessId);
     await this.renderColumn(columnId);
+
+    if (shouldRestoreFocusInUpdatedColumn) {
+      const columnElementAfterUpdate = document.getElementById(columnId);
+      const textContentAfterUpdate = columnElementAfterUpdate
+        ? columnElementAfterUpdate.querySelector(
+            `.${this.config.textContentClass}`
+          )
+        : null;
+      if (textContentAfterUpdate) {
+        const focusTarget = this.getVisibleLineByIdOrFirst(
+          textContentAfterUpdate,
+          selectedElementId
+        );
+        this.updateFocusState(focusTarget, textContentAfterUpdate, false);
+      }
+    }
+
+    if (
+      this.isMobileView() &&
+      this.state.lastDoubleClickedElementId
+    ) {
+      this.addNewHighlights(this.state.lastDoubleClickedElementId);
+    }
     this.sendAriaMessage(
       `Column ${this.getOneIndexByColumnId(columnId)} for ${
         this.state.witness_metadata[witnessId].title
@@ -549,6 +607,10 @@ class EditionManager {
   }
 
   async addNewColumn() {
+    if (this.isMobileView()) {
+      this.sendAriaMessage("Adding columns is disabled on mobile view.");
+      return;
+    }
     const witnessId =
       this.state.sortedWitnessIds[this.state.columnCount] ||
       this.state.sortedWitnessIds[0];
@@ -905,6 +967,7 @@ class EditionManager {
   }
 
   async initColumns(witnessIdsFromUrl) {
+    const singleColumnMode = this.isMobileView();
     let columnIds = [];
     if (witnessIdsFromUrl) {
       // the witness ids and the column ids are already defined by the url
@@ -913,6 +976,9 @@ class EditionManager {
         if (this.state.witness_metadata[witnessId]) {
           const columnId = this.addColumnContainer(witnessId);
           columnIds.push(columnId);
+          if (singleColumnMode) {
+            break;
+          }
         } else {
           console.warn(
             `Witness ID from URL not found in metadata: ${witnessId}`
@@ -923,6 +989,9 @@ class EditionManager {
       for (const witnessId of this.state.sortedWitnessIds) {
         const columnId = this.addColumnContainer(witnessId);
         columnIds.push(columnId);
+        if (singleColumnMode) {
+          break;
+        }
       }
     } else {
       for (let i = 1; i <= this.config.defaultNumberOfColumns; i++) {
@@ -930,6 +999,9 @@ class EditionManager {
         if (witnessId) {
           const columnId = this.addColumnContainer(witnessId);
           columnIds.push(columnId);
+          if (singleColumnMode) {
+            break;
+          }
         }
       }
     }
@@ -974,20 +1046,46 @@ class EditionManager {
     }
   }
 
+  async copyTextToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.setAttribute("readonly", "");
+    textArea.style.position = "fixed";
+    textArea.style.top = "-9999px";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    const copied = document.execCommand("copy");
+    textArea.remove();
+    if (!copied) {
+      throw new Error("Clipboard copy failed");
+    }
+  }
+
+  showCopyUrlNotification() {
+    const notification = document.createElement("div");
+    notification.textContent = this.config.copyUrlNotificationLabel;
+    notification.className = this.config.copyUrlNotificationClass;
+    document.body.appendChild(notification);
+    this.sendAriaMessage(this.config.copyUrlNotificationLabel);
+    setTimeout(() => {
+      notification.style.opacity = "4";
+      setTimeout(() => notification.remove(), 200);
+    }, 1500);
+  }
+
   async copyUrlToClipboardAndNotify() {
     this.updateUrlWithState();
     try {
-      await navigator.clipboard.writeText(window.location.href);
-      // Create notification div
-      const notification = document.createElement("div");
-      notification.textContent = this.config.copyUrlNotificationLabel;
-      notification.className = this.config.copyUrlNotificationClass;
-      document.body.appendChild(notification);
-      this.sendAriaMessage(this.config.copyUrlNotificationLabel);
-      setTimeout(() => {
-        notification.style.opacity = "4";
-        setTimeout(() => notification.remove(), 200);
-      }, 1500);
+      await this.copyTextToClipboard(window.location.href);
+      this.showCopyUrlNotification();
     } catch (err) {
       alert("Failed to copy URL: " + err);
     }
