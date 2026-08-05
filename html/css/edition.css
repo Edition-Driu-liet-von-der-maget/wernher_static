@@ -65,7 +65,9 @@ div.tei-line.tei-line-gap {
 
 /* --- Initials and rubrication --- */
 
-/* Decorated initials (including lombard initials) */
+/* Decorated initials (including lombard initials) as tei:c */
+span.tei-c.tei-c-initial,
+span.tei-c.tei-c-lombard,
 span.tei-hi.tei-hi-initial,
 span.tei-hi.tei-hi-lombard {
     font-size: 1.8em;
@@ -74,14 +76,20 @@ span.tei-hi.tei-hi-lombard {
 }
 
 /* Rubricated text */
+span.tei-hi.tei-hi-rubric,
 span.tei-hi.tei-hi-rubrication {
     font-weight: 700;
     color: #b30000; /* dark red */
 }
 
+/* Circumflex marker: display text already has combining marks from TEI */
+span.tei-hi.tei-hi-circumflex {
+    /* keep in flow; mark presence only via Unicode / optional underline */
+}
+
 /* --- Abbreviations and expansions (choice elements) --- */
 
-/* Abbreviation / superscript choices: original sign vs expanded reading */
+/* Abbreviation choices: original sign vs expanded reading */
 span.tei-choice-abbreviation span.tei-orig,
 span.tei-choice-superscript span.tei-orig {
     font-weight: 600;
@@ -103,10 +111,30 @@ span.tei-choice-et-ligature span.tei-reg {
     color: #555;
 }
 
-/* Superscript hi: render above baseline, smaller */
+/*
+ * Superscript hi: stack truly above the base letter.
+ * Markup is typically: <span class="tei-orig tei-abbr">u<span class="tei-sup">o</span></span>
+ * absolute positioning removes the raised letter from horizontal flow.
+ */
+span.tei-orig.tei-abbr:has(> span.tei-sup),
+span.tei-abbr:has(> span.tei-sup) {
+    position: relative;
+    display: inline-block;
+    /* room so the raised mark is less likely to collide with the line above */
+    padding-top: 0.15em;
+    margin-top: -0.15em;
+}
+
 span.tei-sup {
-    font-size: 0.7em;
-    vertical-align: super;
+    position: absolute;
+    left: 50%;
+    top: -0.15em;
+    transform: translateX(-20%);
+    font-size: 0.55em;
+    line-height: 1;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
 }
 
 /* Visual marker under ligature orig to show merged characters */

@@ -87,9 +87,19 @@
             <xsl:apply-templates/>
         </div>
     </xsl:template>
-<!-- Inline highlighting for decorated initials and rubrication
-         (other hi markup is handled in partials/shared.xsl) -->
-<xsl:template match="tei:hi[@rend='initial' or @rend='lombard' or @rend='rubrication']">
+<!-- Decorated initials / lombards as TEI c -->
+<xsl:template match="tei:c[@type='initial' or @type='lombard']">
+<span>
+    <xsl:attribute name="class">
+        <xsl:text>tei-c tei-c-</xsl:text>
+        <xsl:value-of select="@type"/>
+    </xsl:attribute>
+    <xsl:apply-templates/>
+</span>
+</xsl:template>
+
+<!-- Inline highlighting for rubrication (and legacy hi initials if any) -->
+<xsl:template match="tei:hi[@rend='initial' or @rend='lombard' or @rend='rubric' or @rend='rubrication' or @rend='circumflex']">
 <span class="tei-hi">
     <xsl:if test="@rend">
         <xsl:attribute name="class">
@@ -110,21 +120,19 @@
 </span>
 </xsl:template>
 
-<!-- Abbreviation choices -->
-<xsl:template match="tei:choice[@type='abbreviation']">
-<span class="tei-choice tei-choice-abbreviation" data-choice-type="abbreviation">
-    <span class="tei-orig tei-abbr" data-role="orig">
-        <xsl:apply-templates select="tei:abbr"/>
-    </span>
-    <span class="tei-expan" data-role="expan">
-        <xsl:apply-templates select="tei:expan"/>
-    </span>
-</span>
-</xsl:template>
-
-<!-- Superscript-style choices (used for some nasal marks etc.) -->
-<xsl:template match="tei:choice[@type='superscript']">
-<span class="tei-choice tei-choice-superscript" data-choice-type="superscript">
+<!-- Abbreviation choices: standard TEI choice with abbr/expan (optional legacy @type) -->
+<xsl:template match="tei:choice[tei:abbr and tei:expan]">
+<span class="tei-choice tei-choice-abbreviation">
+    <xsl:attribute name="data-choice-type">
+        <xsl:choose>
+            <xsl:when test="@type">
+                <xsl:value-of select="@type"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>abbreviation</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:attribute>
     <span class="tei-orig tei-abbr" data-role="orig">
         <xsl:apply-templates select="tei:abbr"/>
     </span>
