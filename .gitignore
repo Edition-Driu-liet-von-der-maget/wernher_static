@@ -145,3 +145,4 @@ desktop.ini
 
 # MacOS
 .DS_Store
+.aider*
