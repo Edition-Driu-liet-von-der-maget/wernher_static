@@ -1,0 +1,118 @@
+/* Theme integration layer for column_viewer without touching synopticTextViewer.css */
+
+body {
+    font-family: var(--font-ui);
+    color: var(--color-text);
+    background: var(--color-bg-bottom);
+}
+
+main {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+div.synTexView_controls_wrapper {
+    margin-top: 1.25rem;
+}
+
+button.synTexView_controls_toggle,
+div.synTexView_controls > div button,
+div.synTexView_controls.open div button {
+    background-color: var(--color-surface-muted);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+div.synTexView_controls > div button:hover,
+div.synTexView_controls > div button:focus,
+div.synTexView_controls.open div button:hover,
+div.synTexView_controls.open div button:focus,
+button.synTexView_controls_toggle:hover,
+button.synTexView_controls_toggle:focus {
+    background-color: var(--color-accent-soft);
+    border-color: var(--color-border-strong);
+    color: var(--color-link-hover);
+}
+
+div.synTexView_controls,
+div.synTexView_controls.open {
+    background-color: #f7eef3;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+}
+
+#synTexView-witness-container {
+    gap: 0.6rem;
+}
+
+.synTexView-witness {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+    padding-top: 0;
+}
+
+.synTexView-controls-container {
+    background: #fff2f8;
+    border-bottom: 1px solid var(--color-border);
+    padding-top: 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 0.35rem;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+div#synTexView-controls-container {
+    padding: 0.5rem;
+}
+
+
+button.synTexView-remove-column {
+    background-color: inherit;
+    color: var(--color-text-muted);
+    border-radius: var(--radius-xs);
+    padding-right: 1rem;
+}
+
+button.synTexView-remove-column:hover,
+button.synTexView-remove-column:focus {
+    background-color: var(--color-surface-soft);
+    color: var(--color-link-hover);
+}
+
+span.synTexView-line:hover {
+    background-color: #fde7f0;
+}
+
+span.synTexView-highlight {
+    background-color: #f5d4e4;
+}
+
+span.synTexView-highlight.synTexView-neighbor {
+    border-bottom-color: #f1c7dd;
+}
+
+.synTexView-linenr-global,
+.synTexView-linenr-local {
+    color: var(--color-number);
+}
+
+.synTexView-last .synTexView-linenr-global {
+    color: var(--color-accent);
+}
+
+.synTexView-init,
+.lb,
+.rub {
+    color: var(--color-rubric);
+}
+
+.synTexView-url-copy-notification {
+    background-color: #6e2d4f;
+    border-radius: var(--radius-sm);
+}

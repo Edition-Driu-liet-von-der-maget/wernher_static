@@ -1,0 +1,39 @@
+:root {
+    /* Typography */
+    --font-body: "Source Serif 4", "Noto Serif", Georgia, serif;
+    --font-ui: "Source Sans 3", "Noto Sans", "Segoe UI", sans-serif;
+
+    /* Pastel pink palette */
+    --color-bg-top: #fff4f8;
+    --color-bg-bottom: #fff8fb;
+    --color-surface: #ffffff;
+    --color-surface-muted: #fff1f6;
+    --color-surface-soft: #fde7f0;
+
+    --color-border: #e8c9d7;
+    --color-border-strong: #d9a9bf;
+
+    --color-text: #3a2430;
+    --color-text-muted: #715465;
+
+    --color-link: #9a3a67;
+    --color-link-hover: #7d2f53;
+
+    --color-accent: #c75a8d;
+    --color-accent-soft: #f9dbe9;
+    --color-number: #9a7486;
+    --color-rubric: #b33a5a;
+
+    --color-focus: rgba(199, 90, 141, 0.35);
+
+    /* Radius: intentionally reduced */
+    --radius-xs: 0.2rem;
+    --radius-sm: 0.3rem;
+    --radius-md: 0.45rem;
+    --radius-lg: 0.6rem;
+    --radius-xl: 0.75rem;
+
+    /* Shadows */
+    --shadow-soft: 0 0.3rem 0.9rem rgba(102, 42, 70, 0.08);
+    --shadow-card: 0 0.45rem 1rem rgba(102, 42, 70, 0.1);
+}

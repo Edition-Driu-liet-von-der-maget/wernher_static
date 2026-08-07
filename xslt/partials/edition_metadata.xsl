@@ -12,7 +12,7 @@
             <section class="edition-metadata-block" aria-labelledby="edition-metadata-heading">
                 <details class="edition-metadata-panel">
                     <summary class="edition-metadata-summary">
-                        <span id="edition-metadata-heading">Metadaten zur Handschrift</span>
+                        <span id="edition-metadata-heading">Informationen zur Handschrift</span>
                     </summary>
 
                     <div class="edition-metadata-content">

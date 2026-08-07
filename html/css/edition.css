@@ -1,49 +1,34 @@
-/* --- Color system for edition view --- */
-
-:root {
-    --edition-bg-top: #f3fbf8;
-    --edition-bg-bottom: #f7f8ff;
-    --edition-surface: #ffffff;
-    --edition-surface-muted: #f2f8fb;
-    --edition-border: #c9deea;
-    --edition-border-strong: #9ec6d9;
-    --edition-text: #1a2e3b;
-    --edition-text-muted: #4b6778;
-    --edition-accent: #0f8b8d;
-    --edition-accent-soft: #d8f0ec;
-    --edition-number: #5f7d90;
-    --edition-rubric: #be3a34;
-}
-
 body {
-    background: radial-gradient(1200px 600px at 20% -5%, #e0f6ef 0%, transparent 60%),
-        radial-gradient(1000px 500px at 100% 0%, #e9ebff 0%, transparent 55%),
-        linear-gradient(180deg, var(--edition-bg-top) 0%, var(--edition-bg-bottom) 100%);
-    color: var(--edition-text);
+    font-family: var(--font-body);
+    background: #fff9fc;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+    color: var(--color-text);
 }
 
 main {
-    color: var(--edition-text);
+    color: var(--color-text);
 }
 
 .container {
-    background: var(--edition-surface);
-    border: 1px solid var(--edition-border);
-    border-radius: 1rem;
-    box-shadow: 0 0.5rem 1.25rem rgba(17, 58, 88, 0.08);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
     padding: 1.2rem 1.4rem 1.5rem 1.4rem;
 }
 
 h1 {
-    color: #12344c;
+    color: #5d2a43;
 }
 
 a {
-    color: #0a6f8c;
+    color: var(--color-link);
 }
 
 a:hover {
-    color: #06556b;
+    color: var(--color-link-hover);
 }
 
 .edition-breadcrumb-nav {
@@ -52,28 +37,28 @@ a:hover {
 
 .edition-breadcrumb-nav .breadcrumb {
     margin-bottom: 0;
-    background: var(--edition-surface);
-    border: 1px solid var(--edition-border);
-    border-radius: 999px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
     display: inline-flex;
     padding: 0.35rem 0.95rem;
 }
 
 .edition-breadcrumb-nav .breadcrumb-item,
 .edition-breadcrumb-nav .breadcrumb-item a {
-    color: var(--edition-text-muted);
+    color: var(--color-text-muted);
 }
 
 .edition-breadcrumb-nav .breadcrumb-item.active {
-    color: #1d4f69;
+    color: #7b3557;
     font-weight: 600;
 }
 
 div.tei-line.tei-line-gap {
     display: inline-block;
-    background-color: var(--edition-surface-muted);
+    background-color: var(--color-surface-muted);
     padding: 0 0.5em;
-    border-radius: 0.25em;
+    border-radius: var(--radius-xs);
 }
 div.tei-line.tei-line-gap:hover::after {
     content: attr(data-missing-lines) " missing line(s)";
@@ -98,40 +83,39 @@ div.tei-lg.tei-lg-sub-group {
 .tei-subgroup-label {
     font-weight: 600;
     margin-bottom: 0.2rem;
-    color: #1f4d64;
+    color: #6f2f50;
 }
 
 /* Sub-group body: indented block with a left border */
 .tei-subgroup-body {
     margin-left: 1.5rem;
     padding-left: 0.75rem;
-    border-left: 2px solid var(--edition-border-strong);
+    border-left: 2px solid var(--color-border-strong);
 }
 
 /* Individual verse lines */
 div.tei-line {
-    position: relative;
-    padding-left: 3.5rem; /* space for line number */
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
     line-height: 1.4;
 }
 
 /* Show the verse number from data-n in the left margin */
 div.tei-line::before {
     content: attr(id);
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 3rem;
+    flex: 0 0 3rem;
     text-align: right;
-    margin-right: 0.5rem;
-    color: var(--edition-number);
+    color: var(--color-number);
     font-size: 0.8em;
     font-variant-numeric: tabular-nums;
+    line-height: 1;
+    align-self: baseline;
 }
 
 /* Gap marker stays aligned with other lines */
 div.tei-line.tei-line-gap {
-    padding-left: 3.5rem;
+    align-items: baseline;
 }
 
 /* --- Initials and rubrication --- */
@@ -143,14 +127,14 @@ span.tei-hi.tei-hi-initial,
 span.tei-hi.tei-hi-lombard {
     font-size: 1.8em;
     font-weight: 700;
-    color: var(--edition-rubric);
+    color: var(--color-rubric);
 }
 
 /* Rubricated text */
 span.tei-hi.tei-hi-rubric,
 span.tei-hi.tei-hi-rubrication {
     font-weight: 700;
-    color: var(--edition-rubric);
+    color: var(--color-rubric);
 }
 
 /* Circumflex marker: display text already has combining marks from TEI */
@@ -168,7 +152,7 @@ span.tei-choice-superscript span.tei-orig {
 
 span.tei-choice-abbreviation span.tei-expan,
 span.tei-choice-superscript span.tei-expan {
-    color: var(--edition-text-muted);
+    color: var(--color-text-muted);
 }
 
 /* Ligatures: emphasize that orig is a special glyph */
@@ -179,7 +163,7 @@ span.tei-choice-et-ligature span.tei-orig {
 
 span.tei-choice-ligature span.tei-reg,
 span.tei-choice-et-ligature span.tei-reg {
-    color: var(--edition-text-muted);
+    color: var(--color-text-muted);
 }
 
 /*
@@ -236,10 +220,10 @@ span.tei-choice-ligature span.tei-orig::after {
 }
 
 .edition-metadata-panel {
-    border: 1px solid var(--edition-border);
-    border-radius: 0.75rem;
-    background: linear-gradient(180deg, #fcfffe 0%, #f1f8fb 100%);
-    box-shadow: 0 0.35rem 1rem rgba(20, 76, 108, 0.08);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: #fff6fa;
+    box-shadow: var(--shadow-soft);
     overflow: hidden;
 }
 
@@ -248,9 +232,9 @@ span.tei-choice-ligature span.tei-orig::after {
     list-style: none;
     padding: 0.9rem 1.1rem;
     font-weight: 700;
-    color: #11415a;
-    background-color: var(--edition-accent-soft);
-    border-bottom: 1px solid var(--edition-border);
+    color: #652b49;
+    background-color: var(--color-accent-soft);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .edition-metadata-summary::-webkit-details-marker {
@@ -275,13 +259,13 @@ span.tei-choice-ligature span.tei-orig::after {
 .metadata-section + .metadata-section {
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px dashed var(--edition-border);
+    border-top: 1px dashed var(--color-border);
 }
 
 .metadata-section-title {
     font-size: 1rem;
     margin: 0 0 0.55rem 0;
-    color: #1b4f66;
+    color: #7a3156;
 }
 
 .metadata-list {
@@ -298,27 +282,27 @@ span.tei-choice-ligature span.tei-orig::after {
 .metadata-item dt {
     margin: 0;
     font-weight: 600;
-    color: #2b5b73;
+    color: #7a4a63;
 }
 
 .metadata-item dd {
     margin: 0;
-    color: var(--edition-text);
+    color: var(--color-text);
     overflow-wrap: anywhere;
 }
 
 .metadata-part {
     margin-top: 0.75rem;
     padding: 0.75rem;
-    border: 1px solid var(--edition-border);
-    border-radius: 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
     background: #ffffff;
 }
 
 .metadata-part-title {
     margin: 0 0 0.45rem 0;
     font-size: 0.95rem;
-    color: #1a5671;
+    color: #7b3557;
 }
 
 .metadata-notes {
@@ -332,14 +316,14 @@ span.tei-choice-ligature span.tei-orig::after {
 
 .edition-footnotes-wrapper {
     text-align: center;
-    color: var(--edition-text-muted);
+    color: var(--color-text-muted);
 }
 
 .edition-footnote-ref-number {
     font-size: 0.78rem;
     vertical-align: super;
     margin-right: 0.4em;
-    color: #355f79;
+    color: #8d4e71;
 }
 
 @media (max-width: 768px) {

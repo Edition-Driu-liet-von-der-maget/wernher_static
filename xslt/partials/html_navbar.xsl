@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="#all" version="2.0">
     <xsl:template name="nav_bar">
         <header>
-            <nav aria-label="Primary" class="navbar navbar-expand-lg bg-body-tertiary">
+            <nav aria-label="Primary" class="navbar navbar-expand-lg bg-body-tertiary site-navbar">
                 <div class="container-fluid">
                     <a class="navbar-brand" href="index.html">
                         <xsl:value-of select="$project_short_title"/>

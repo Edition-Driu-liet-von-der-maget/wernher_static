@@ -21,6 +21,7 @@
                     <xsl:with-param name="html_title" select="$doc_title"></xsl:with-param>
                 </xsl:call-template>
                 <link rel="stylesheet" href="css/synopticTextViewer.css"/>
+                <link rel="stylesheet" href="css/column_viewer.css"/>
                 <script type="module" src="js/synopticTextViewer/columnViewer.js"/>
             </head>
             <body>
