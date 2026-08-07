@@ -1,6 +1,77 @@
+/* --- Color system for edition view --- */
+
+:root {
+    --edition-bg-top: #f3fbf8;
+    --edition-bg-bottom: #f7f8ff;
+    --edition-surface: #ffffff;
+    --edition-surface-muted: #f2f8fb;
+    --edition-border: #c9deea;
+    --edition-border-strong: #9ec6d9;
+    --edition-text: #1a2e3b;
+    --edition-text-muted: #4b6778;
+    --edition-accent: #0f8b8d;
+    --edition-accent-soft: #d8f0ec;
+    --edition-number: #5f7d90;
+    --edition-rubric: #be3a34;
+}
+
+body {
+    background: radial-gradient(1200px 600px at 20% -5%, #e0f6ef 0%, transparent 60%),
+        radial-gradient(1000px 500px at 100% 0%, #e9ebff 0%, transparent 55%),
+        linear-gradient(180deg, var(--edition-bg-top) 0%, var(--edition-bg-bottom) 100%);
+    color: var(--edition-text);
+}
+
+main {
+    color: var(--edition-text);
+}
+
+.container {
+    background: var(--edition-surface);
+    border: 1px solid var(--edition-border);
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1.25rem rgba(17, 58, 88, 0.08);
+    padding: 1.2rem 1.4rem 1.5rem 1.4rem;
+}
+
+h1 {
+    color: #12344c;
+}
+
+a {
+    color: #0a6f8c;
+}
+
+a:hover {
+    color: #06556b;
+}
+
+.edition-breadcrumb-nav {
+    --bs-breadcrumb-divider: '›';
+}
+
+.edition-breadcrumb-nav .breadcrumb {
+    margin-bottom: 0;
+    background: var(--edition-surface);
+    border: 1px solid var(--edition-border);
+    border-radius: 999px;
+    display: inline-flex;
+    padding: 0.35rem 0.95rem;
+}
+
+.edition-breadcrumb-nav .breadcrumb-item,
+.edition-breadcrumb-nav .breadcrumb-item a {
+    color: var(--edition-text-muted);
+}
+
+.edition-breadcrumb-nav .breadcrumb-item.active {
+    color: #1d4f69;
+    font-weight: 600;
+}
+
 div.tei-line.tei-line-gap {
     display: inline-block;
-    background-color: rgb(241, 241, 241);
+    background-color: var(--edition-surface-muted);
     padding: 0 0.5em;
     border-radius: 0.25em;
 }
@@ -27,14 +98,14 @@ div.tei-lg.tei-lg-sub-group {
 .tei-subgroup-label {
     font-weight: 600;
     margin-bottom: 0.2rem;
-    color: #333;
+    color: #1f4d64;
 }
 
 /* Sub-group body: indented block with a left border */
 .tei-subgroup-body {
     margin-left: 1.5rem;
     padding-left: 0.75rem;
-    border-left: 2px solid #ddd;
+    border-left: 2px solid var(--edition-border-strong);
 }
 
 /* Individual verse lines */
@@ -53,7 +124,7 @@ div.tei-line::before {
     width: 3rem;
     text-align: right;
     margin-right: 0.5rem;
-    color: #888;
+    color: var(--edition-number);
     font-size: 0.8em;
     font-variant-numeric: tabular-nums;
 }
@@ -72,14 +143,14 @@ span.tei-hi.tei-hi-initial,
 span.tei-hi.tei-hi-lombard {
     font-size: 1.8em;
     font-weight: 700;
-    color: #b30000; /* dark red */
+    color: var(--edition-rubric);
 }
 
 /* Rubricated text */
 span.tei-hi.tei-hi-rubric,
 span.tei-hi.tei-hi-rubrication {
     font-weight: 700;
-    color: #b30000; /* dark red */
+    color: var(--edition-rubric);
 }
 
 /* Circumflex marker: display text already has combining marks from TEI */
@@ -97,7 +168,7 @@ span.tei-choice-superscript span.tei-orig {
 
 span.tei-choice-abbreviation span.tei-expan,
 span.tei-choice-superscript span.tei-expan {
-    color: #555;
+    color: var(--edition-text-muted);
 }
 
 /* Ligatures: emphasize that orig is a special glyph */
@@ -108,7 +179,7 @@ span.tei-choice-et-ligature span.tei-orig {
 
 span.tei-choice-ligature span.tei-reg,
 span.tei-choice-et-ligature span.tei-reg {
-    color: #555;
+    color: var(--edition-text-muted);
 }
 
 /*
@@ -156,4 +227,132 @@ span.tei-choice-ligature span.tei-orig::after {
     border-right: 1px solid currentColor;
     border-bottom: 1px solid currentColor;
     pointer-events: none;
+}
+
+/* --- Metadata panel at top of edition page --- */
+
+.edition-metadata-block {
+    margin: 1.25rem 0 2rem 0;
+}
+
+.edition-metadata-panel {
+    border: 1px solid var(--edition-border);
+    border-radius: 0.75rem;
+    background: linear-gradient(180deg, #fcfffe 0%, #f1f8fb 100%);
+    box-shadow: 0 0.35rem 1rem rgba(20, 76, 108, 0.08);
+    overflow: hidden;
+}
+
+.edition-metadata-summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 0.9rem 1.1rem;
+    font-weight: 700;
+    color: #11415a;
+    background-color: var(--edition-accent-soft);
+    border-bottom: 1px solid var(--edition-border);
+}
+
+.edition-metadata-summary::-webkit-details-marker {
+    display: none;
+}
+
+.edition-metadata-summary::before {
+    content: "▾";
+    display: inline-block;
+    margin-right: 0.5rem;
+    transition: transform 0.2s ease;
+}
+
+.edition-metadata-panel:not([open]) .edition-metadata-summary::before {
+    transform: rotate(-90deg);
+}
+
+.edition-metadata-content {
+    padding: 1rem 1.1rem 1.2rem 1.1rem;
+}
+
+.metadata-section + .metadata-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--edition-border);
+}
+
+.metadata-section-title {
+    font-size: 1rem;
+    margin: 0 0 0.55rem 0;
+    color: #1b4f66;
+}
+
+.metadata-list {
+    margin: 0;
+}
+
+.metadata-item {
+    display: grid;
+    grid-template-columns: minmax(10rem, 12rem) 1fr;
+    column-gap: 0.9rem;
+    padding: 0.3rem 0;
+}
+
+.metadata-item dt {
+    margin: 0;
+    font-weight: 600;
+    color: #2b5b73;
+}
+
+.metadata-item dd {
+    margin: 0;
+    color: var(--edition-text);
+    overflow-wrap: anywhere;
+}
+
+.metadata-part {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--edition-border);
+    border-radius: 0.6rem;
+    background: #ffffff;
+}
+
+.metadata-part-title {
+    margin: 0 0 0.45rem 0;
+    font-size: 0.95rem;
+    color: #1a5671;
+}
+
+.metadata-notes {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.metadata-notes li + li {
+    margin-top: 0.35rem;
+}
+
+.edition-footnotes-wrapper {
+    text-align: center;
+    color: var(--edition-text-muted);
+}
+
+.edition-footnote-ref-number {
+    font-size: 0.78rem;
+    vertical-align: super;
+    margin-right: 0.4em;
+    color: #355f79;
+}
+
+@media (max-width: 768px) {
+    .edition-metadata-summary {
+        padding: 0.8rem 0.9rem;
+    }
+
+    .edition-metadata-content {
+        padding: 0.85rem 0.9rem 1rem 0.9rem;
+    }
+
+    .metadata-item {
+        grid-template-columns: 1fr;
+        row-gap: 0.15rem;
+    }
 }

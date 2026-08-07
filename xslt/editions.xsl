@@ -12,6 +12,7 @@
     <xsl:import href="partials/html_footer.xsl"/>
     <xsl:import href="partials/blockquote.xsl"/>
     <xsl:import href="partials/zotero.xsl"/>
+    <xsl:import href="partials/edition_metadata.xsl"/>
     <!-- TEI-specific inline and structural rendering rules (verses, choices, ligatures, initials, etc.) -->
     <xsl:import href="edition_specifics.xsl"/>
 
@@ -22,7 +23,17 @@
         <xsl:value-of select="replace(tokenize(data(tei:TEI/@next), '/')[last()], '.xml', '.html')"/>
     </xsl:variable>
     <xsl:variable name="teiSource">
-        <xsl:value-of select="data(tei:TEI/@xml:id)"/>
+        <xsl:choose>
+            <xsl:when test="normalize-space(string(/tei:TEI/@xml:id))">
+                <xsl:value-of select="string(/tei:TEI/@xml:id)"/>
+            </xsl:when>
+            <xsl:when test="normalize-space(string(.//tei:sourceDesc/tei:msDesc[1]/@xml:id))">
+                <xsl:value-of select="concat(string(.//tei:sourceDesc/tei:msDesc[1]/@xml:id), '.xml')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="tokenize(base-uri(/), '/')[last()]"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:variable>
     <xsl:variable name="link">
         <xsl:value-of select="replace($teiSource, '.xml', '.html')"/>
@@ -49,7 +60,7 @@
             <body class="d-flex flex-column h-100">
                 <xsl:call-template name="nav_bar"/>
                 <main class="flex-shrink-0 flex-grow-1">
-                    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="ps-5 p-3">
+                    <nav aria-label="breadcrumb" class="ps-5 p-3 edition-breadcrumb-nav">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item">
                                 <a href="index.html">
@@ -105,8 +116,9 @@
                                 </xsl:if>
                             </div>
                         </div>
+                        <xsl:call-template name="render_edition_metadata"/>
                         <xsl:apply-templates select=".//tei:body"></xsl:apply-templates>
-                        <p style="text-align:center;">
+                        <p class="edition-footnotes-wrapper">
                             <xsl:for-each select=".//tei:note[not(./tei:p)]">
                                 <div class="footnotes">
                                     <xsl:element name="a">
@@ -119,7 +131,7 @@
                                                 <xsl:text>#fna_</xsl:text>
                                                 <xsl:number level="any" format="1" count="tei:note"/>
                                             </xsl:attribute>
-                                            <span style="font-size:7pt;vertical-align:super; margin-right: 0.4em">
+                                            <span class="edition-footnote-ref-number">
                                                 <xsl:number level="any" format="1" count="tei:note"/>
                                             </span>
                                         </a>
