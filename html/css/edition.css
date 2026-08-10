@@ -97,7 +97,6 @@ div.tei-lg.tei-lg-sub-group {
 div.tei-line {
     display: flex;
     align-items: baseline;
-    gap: 0.5rem;
     line-height: 1.4;
 }
 
@@ -111,6 +110,7 @@ div.tei-line::before {
     font-variant-numeric: tabular-nums;
     line-height: 1;
     align-self: baseline;
+    padding-right: 0.5rem;
 }
 
 /* Gap marker stays aligned with other lines */
@@ -166,30 +166,19 @@ span.tei-choice-et-ligature span.tei-reg {
     color: var(--color-text-muted);
 }
 
-/*
- * Superscript hi: stack truly above the base letter.
- * Markup is typically: <span class="tei-orig tei-abbr">u<span class="tei-sup">o</span></span>
- * absolute positioning removes the raised letter from horizontal flow.
- */
-span.tei-orig.tei-abbr:has(> span.tei-sup),
-span.tei-abbr:has(> span.tei-sup) {
-    position: relative;
-    display: inline-block;
-    /* room so the raised mark is less likely to collide with the line above */
-    padding-top: 0.15em;
-    margin-top: -0.15em;
-}
+/* --- Superscript characters --- */
 
+/*
+ * Superscripts are emitted by the XSLT as Unicode modifier/superscript
+ * characters (e.g. ˢ, ᵒ, ᵛ, ᵉ).
+ *
+ * Keep them in normal text flow rather than positioning them absolutely.
+ * The fallback fonts provide glyph coverage where the body font does not.
+ */
 span.tei-sup {
-    position: absolute;
-    left: 50%;
-    top: -0.15em;
-    transform: translateX(-20%);
-    font-size: 0.55em;
+    font-family: "DejaVu Sans", "Noto Sans", var(--font-body), sans-serif;
+    font-size: 1em;
     line-height: 1;
-    font-weight: 600;
-    white-space: nowrap;
-    pointer-events: none;
 }
 
 /* Visual marker under ligature orig to show merged characters */

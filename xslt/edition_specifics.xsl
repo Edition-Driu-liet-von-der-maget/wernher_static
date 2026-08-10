@@ -112,13 +112,71 @@
 </span>
 </xsl:template>
 
-<!-- Superscript markup: keep the base character on the baseline and
-         raise only the marked character(s) above it. -->
-<xsl:template match="tei:hi[@rend='superscript']">
-<span class="tei-sup">
-    <xsl:apply-templates/>
-</span>
-</xsl:template>
+<!--
+         Superscript as Unicode modifier / superscript letters so the font
+         places them above the baseline (no CSS stacking hacks).
+         Data inventory: s o v e n i u (and a few others as fallback).
+    -->
+    <xsl:template match="tei:hi[@rend='superscript']">
+        <xsl:variable name="raw" select="normalize-space(string-join(.//text(), ''))"/>
+        <xsl:variable name="mapped">
+            <xsl:for-each select="string-to-codepoints($raw)">
+                <xsl:variable name="ch" select="codepoints-to-string(.)"/>
+                <xsl:choose>
+                    <xsl:when test="$ch = 'a'">ᵃ</xsl:when>
+                    <xsl:when test="$ch = 'b'">ᵇ</xsl:when>
+                    <xsl:when test="$ch = 'c'">ᶜ</xsl:when>
+                    <xsl:when test="$ch = 'd'">ᵈ</xsl:when>
+                    <xsl:when test="$ch = 'e'">ᵉ</xsl:when>
+                    <xsl:when test="$ch = 'f'">ᶠ</xsl:when>
+                    <xsl:when test="$ch = 'g'">ᵍ</xsl:when>
+                    <xsl:when test="$ch = 'h'">ʰ</xsl:when>
+                    <xsl:when test="$ch = 'i'">ⁱ</xsl:when>
+                    <xsl:when test="$ch = 'j'">ʲ</xsl:when>
+                    <xsl:when test="$ch = 'k'">ᵏ</xsl:when>
+                    <xsl:when test="$ch = 'l'">ˡ</xsl:when>
+                    <xsl:when test="$ch = 'm'">ᵐ</xsl:when>
+                    <xsl:when test="$ch = 'n'">ⁿ</xsl:when>
+                    <xsl:when test="$ch = 'o'">ᵒ</xsl:when>
+                    <xsl:when test="$ch = 'p'">ᵖ</xsl:when>
+                    <xsl:when test="$ch = 'r'">ʳ</xsl:when>
+                    <xsl:when test="$ch = 's'">ˢ</xsl:when>
+                    <xsl:when test="$ch = 't'">ᵗ</xsl:when>
+                    <xsl:when test="$ch = 'u'">ᵘ</xsl:when>
+                    <xsl:when test="$ch = 'v'">ᵛ</xsl:when>
+                    <xsl:when test="$ch = 'w'">ʷ</xsl:when>
+                    <xsl:when test="$ch = 'x'">ˣ</xsl:when>
+                    <xsl:when test="$ch = 'y'">ʸ</xsl:when>
+                    <xsl:when test="$ch = 'z'">ᶻ</xsl:when>
+                    <xsl:when test="$ch = 'A'">ᴬ</xsl:when>
+                    <xsl:when test="$ch = 'B'">ᴮ</xsl:when>
+                    <xsl:when test="$ch = 'D'">ᴰ</xsl:when>
+                    <xsl:when test="$ch = 'E'">ᴱ</xsl:when>
+                    <xsl:when test="$ch = 'G'">ᴳ</xsl:when>
+                    <xsl:when test="$ch = 'H'">ᴴ</xsl:when>
+                    <xsl:when test="$ch = 'I'">ᴵ</xsl:when>
+                    <xsl:when test="$ch = 'J'">ᴶ</xsl:when>
+                    <xsl:when test="$ch = 'K'">ᴷ</xsl:when>
+                    <xsl:when test="$ch = 'L'">ᴸ</xsl:when>
+                    <xsl:when test="$ch = 'M'">ᴹ</xsl:when>
+                    <xsl:when test="$ch = 'N'">ᴺ</xsl:when>
+                    <xsl:when test="$ch = 'O'">ᴼ</xsl:when>
+                    <xsl:when test="$ch = 'P'">ᴾ</xsl:when>
+                    <xsl:when test="$ch = 'R'">ᴿ</xsl:when>
+                    <xsl:when test="$ch = 'T'">ᵀ</xsl:when>
+                    <xsl:when test="$ch = 'U'">ᵁ</xsl:when>
+                    <xsl:when test="$ch = 'V'">ⱽ</xsl:when>
+                    <xsl:when test="$ch = 'W'">ᵂ</xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$ch"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+        </xsl:variable>
+        <span class="tei-sup" aria-label="{$raw}">
+            <xsl:value-of select="$mapped"/>
+        </span>
+    </xsl:template>
 
 <!-- Abbreviation choices: standard TEI choice with abbr/expan (optional legacy @type) -->
 <xsl:template match="tei:choice[tei:abbr and tei:expan]">
