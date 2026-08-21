@@ -343,7 +343,7 @@ class EditionManager {
 
   initClickListeners() {
     // doubleclick triggers scroll
-    this.witnessContainer.addEventListener("dblclick", (event) => {
+    this.witnessContainer.addEventListener("click", (event) => {
       const line = event.target.closest(`.${this.config.witnessLineClass}`);
       this.syncVerticalScrolling(line);
     });
