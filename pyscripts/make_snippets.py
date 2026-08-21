@@ -12,6 +12,7 @@ xsl_filepath = "./xslt/generate_snippets.xsl"
 output_dir = "./html/witness_snippets"
 docid_xpath = "//tei:witness[1]/@xml:id"
 doc_title_xpath = "//tei:title[1]/text()"
+existing_snippet_paths_json = "./data/meta/snippet_paths.json"
 sorting_xpath = None
 
 ###################
@@ -89,9 +90,16 @@ def xslt(in_xml_dir_glob: list, xsl_path: str, output_dir) -> dict:
 
 
 def log_snippetpaths(file_paths: dict, json_file_path: str):
-    with open(json_file_path, "w") as json_file:
-        json.dump(file_paths, json_file, indent=4)
-        print(f"logged to {json_file_path}")
+    if os.path.exists(existing_snippet_paths_json):
+        with open(existing_snippet_paths_json, "r") as json_file:
+            existing_paths = json.load(json_file)
+        with open(json_file_path, "w") as json_file:
+            json.dump(existing_paths, json_file, indent=4)
+    else:
+        print(f"{json_file_path} does not exist, creating new file")
+        with open(json_file_path, "w") as json_file:
+            json.dump(file_paths, json_file, indent=4)
+            print(f"logged to {json_file_path}")
 
 def clear_snippet_dir():
     for file in glob.glob(os.path.join(output_dir, "*")):

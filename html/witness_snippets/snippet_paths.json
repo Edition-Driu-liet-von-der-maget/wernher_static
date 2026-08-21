@@ -1,47 +1,42 @@
 {
     "1": {
         "filepath": "witness_snippets/W.html",
-        "sorting": 1,
-        "title": "W (Zeuge) 1"
-    },
-    "2": {
-        "filepath": "witness_snippets/Notizen.html",
-        "sorting": 2,
-        "title": "Notizen (Zeuge) 2"
+        "sorting": 800,
+        "title": "W"
     },
     "3": {
         "filepath": "witness_snippets/F.html",
-        "sorting": 3,
-        "title": "F (Zeuge) 3"
+        "sorting": 500,
+        "title": "F"
     },
     "4": {
         "filepath": "witness_snippets/A.html",
-        "sorting": 4,
-        "title": "A (Zeuge) 4"
+        "sorting": 200,
+        "title": "A"
     },
     "5": {
         "filepath": "witness_snippets/C.html",
-        "sorting": 5,
-        "title": "C (Zeuge) 5"
+        "sorting": 300,
+        "title": "C"
     },
     "6": {
         "filepath": "witness_snippets/G.html",
-        "sorting": 6,
-        "title": "G (Zeuge) 6"
+        "sorting": 600,
+        "title": "G"
     },
     "7": {
         "filepath": "witness_snippets/E.html",
-        "sorting": 7,
-        "title": "E (Zeuge) 7"
+        "sorting": 400,
+        "title": "E"
     },
     "8": {
         "filepath": "witness_snippets/B.html",
-        "sorting": 8,
-        "title": "B (Zeuge) 8"
+        "sorting": 250,
+        "title": "B"
     },
     "9": {
         "filepath": "witness_snippets/D.html",
-        "sorting": 9,
-        "title": "D (Zeuge) 9"
+        "sorting": 100,
+        "title": "D"
     }
 }
