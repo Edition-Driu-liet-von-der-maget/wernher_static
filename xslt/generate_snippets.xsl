@@ -121,11 +121,6 @@
     <xsl:template match="//tei:choice">
         <xsl:apply-templates/>
     </xsl:template>
-    <xsl:template match="tei:orig">
-        <xsl:apply-templates/>
-    </xsl:template>
-    <xsl:template match="tei:reg">
-    </xsl:template>
     <xsl:template match="tei:abbr">
         <xsl:apply-templates/>
     </xsl:template>
