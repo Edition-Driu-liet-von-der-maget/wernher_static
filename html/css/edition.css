@@ -95,27 +95,20 @@ div.tei-lg.tei-lg-sub-group {
 
 /* Individual verse lines */
 div.tei-line {
-    display: flex;
-    align-items: baseline;
     line-height: 1.4;
 }
 
-/* Show the verse number from data-n in the left margin */
 div.tei-line::before {
     content: attr(id);
-    flex: 0 0 3rem;
+    display: inline-block;
+    width: 3rem;
+    margin-right: 0.5rem;
     text-align: right;
     color: var(--color-number);
     font-size: 0.8em;
     font-variant-numeric: tabular-nums;
     line-height: 1;
-    align-self: baseline;
-    padding-right: 0.5rem;
-}
-
-/* Gap marker stays aligned with other lines */
-div.tei-line.tei-line-gap {
-    align-items: baseline;
+    vertical-align: baseline;
 }
 
 /* --- Initials and rubrication --- */
