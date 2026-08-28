@@ -1,12 +1,11 @@
 (function () {
   'use strict';
 
-  var GLOBAL_KEY = 'edition-hide-global-versnr'; // "1" = hidden
-  var LOCAL_KEY = 'edition-show-local-versnr';   // "1" = shown
-
   function init() {
     var globalBtn = document.getElementById('toggle-global-vers-numbers');
     var localBtn = document.getElementById('toggle-local-vers-numbers');
+    var hideGlobal = false;
+    var showLocal = false;
 
     function applyState() {
       document.body.classList.toggle('hide-global-vers-numbers', hideGlobal);
