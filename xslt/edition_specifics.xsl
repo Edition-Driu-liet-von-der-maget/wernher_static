@@ -61,10 +61,26 @@
         </div>
     </xsl:template>
 
-    <!-- Verse lines -->
     <xsl:template match="tei:l">
-        <xsl:variable name="line_id" select="@xml:id">
-        </xsl:variable>
+        <xsl:variable name="line_id" select="@xml:id"/>
+        <!-- Material-gap detection: this verse is adjacent to empty verses
+             (missing/torn material) and its gap sits at that boundary. -->
+        <xsl:variable name="prevLine" select="preceding-sibling::tei:l[1]"/>
+        <xsl:variable name="nextLine" select="following-sibling::tei:l[1]"/>
+        <xsl:variable name="emptyBefore" select="exists($prevLine) and not(normalize-space(string-join($prevLine//text(), '')))"/>
+        <xsl:variable name="emptyAfter" select="exists($nextLine) and not(normalize-space(string-join($nextLine//text(), '')))"/>
+        <xsl:variable name="leadingGap" select="exists(tei:gap) and not(tei:gap[1]/preceding-sibling::*[not(self::tei:pb)]) and not(normalize-space(string-join(tei:gap[1]/preceding-sibling::text(), '')))"/>
+        <xsl:variable name="trailingGap" select="exists(tei:gap) and not(tei:gap[last()]/following-sibling::*[not(self::tei:pb)]) and not(normalize-space(string-join(tei:gap[last()]/following-sibling::text(), '')))"/>
+        <!-- Double-gap edge: this leading gap is the second of a
+             "gap + empty run + gap" pair if the nearest preceding non-empty
+             verse ends with a gap; then suppress the leading line (the
+             previous verse already emitted the single […–…]). -->
+        <xsl:variable name="prevNonEmpty" select="preceding-sibling::tei:l[normalize-space(string-join(.//text(), '')) != ''][1]"/>
+        <xsl:variable name="prevTrailingGap" select="exists($prevNonEmpty) and exists($prevNonEmpty/tei:gap) and not($prevNonEmpty/tei:gap[last()]/following-sibling::*[not(self::tei:pb)]) and not(normalize-space(string-join($prevNonEmpty/tei:gap[last()]/following-sibling::text(), '')))"/>
+
+        <xsl:if test="$emptyBefore and $leadingGap and not($prevTrailingGap)">
+            <div class="tei-material-gap">[…–…]</div>
+        </xsl:if>
         <div class="tei-line">
             <xsl:if test="@n">
                 <xsl:attribute name="id">
@@ -84,6 +100,9 @@
             </span>
             <xsl:apply-templates/>
         </div>
+        <xsl:if test="$emptyAfter and $trailingGap">
+            <div class="tei-material-gap">[…–…]</div>
+        </xsl:if>
     </xsl:template>
 <!-- Decorated initials / lombards as TEI c -->
 <xsl:template match="tei:c[@type='initial' or @type='lombard']">
@@ -220,6 +239,13 @@
         <xsl:apply-templates select="tei:reg"/>
     </span>
 </span>
+</xsl:template>
+
+<!-- Illegible gap: grey inline […]. The dedicated […–…] material-gap line
+     is emitted by the tei:l template so it sits between verses, not inside
+     a verse. -->
+<xsl:template match="tei:gap">
+    <span class="tei-gap">[…]</span>
 </xsl:template>
 
 </xsl:stylesheet>

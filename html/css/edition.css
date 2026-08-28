@@ -93,8 +93,9 @@ div.tei-line {
 
 
 span.tei-vers-number {
+    overflow: hidden;
     display: inline-block;
-    width: 1.5rem;
+    width: 2rem;
     margin-right: 0.8rem;
     text-align: right;
     font-size: 0.8em;
@@ -122,6 +123,18 @@ span.pb::before {
 }
 span.pb::after {
     content: attr(data-curr);
+}
+
+/* Illegible-text gap: grey […] */
+span.tei-gap {
+    color: var(--color-text-muted);
+}
+
+/* Material gap (torn / missing material at a boundary of empty verses):
+   dedicated line with […–…]. */
+div.tei-material-gap {
+    color: var(--color-text-muted);
+    margin: 0.15rem 0;
 }
 
 /* --- Toolbar: toggle the display of verse numbers --- */
