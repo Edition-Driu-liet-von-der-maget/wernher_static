@@ -77,21 +77,13 @@ div.tei-line.tei-line-gap:hover::after {
 /* Sub-groups (stanzas/sections) inside a witness */
 div.tei-lg.tei-lg-sub-group {
     padding-top: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-/* Sub-group label: aligned with witness text (no extra indent) */
-.tei-subgroup-label {
-    font-weight: 600;
-    margin-bottom: 0.2rem;
-    color: #6f2f50;
+    margin-bottom: .5rem;
 }
 
 /* Sub-group body: indented block with a left border */
 .tei-subgroup-body {
     margin-left: 1.5rem;
     padding-left: 0.75rem;
-    border-left: 2px solid var(--color-border-strong);
 }
 
 /* Individual verse lines */
