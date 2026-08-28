@@ -116,6 +116,14 @@
                                 </xsl:if>
                             </div>
                         </div>
+                        <div class="edition-toolbar" role="toolbar" aria-label="Ansicht">
+                            <button type="button" id="toggle-global-vers-numbers" class="btn edition-toolbar-btn" aria-pressed="true" title="Globale Versnummern ein- bzw. ausblenden">
+                                <i aria-hidden="true"></i><span class="edition-toolbar-label">Globale Versnummern</span>
+                            </button>
+                            <button type="button" id="toggle-local-vers-numbers" class="btn edition-toolbar-btn" aria-pressed="false" title="Lokale Versnummern ein- bzw. ausblenden">
+                                <i aria-hidden="true"></i><span class="edition-toolbar-label">Lokale Versnummern</span>
+                            </button>
+                        </div>
                         <xsl:call-template name="render_edition_metadata"/>
                         <xsl:apply-templates select=".//tei:body"></xsl:apply-templates>
                         <p class="edition-footnotes-wrapper">
@@ -157,6 +165,7 @@
                 <xsl:call-template name="html_footer"/>
                 <script src="vendor/openseadragon-bin-4.1.1/openseadragon.min.js"/>
                 <script src="js/tei-line-dblclick.js"></script>
+                <script src="js/toggle-vers-numbers.js"></script>
             </body>
         </html>
     </xsl:template>

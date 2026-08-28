@@ -15,7 +15,7 @@
             <xsl:for-each-group select="*" group-adjacent="if (self::tei:l and normalize-space(string-join(.//text(), '')) = '') then 'empty-l' else concat('other-', position())">
                 <xsl:choose>
                     <xsl:when test="current-grouping-key() = 'empty-l'">
-                        <div class="tei-line tei-line-gap" data-missing-lines="{count(current-group())}">[…]</div>
+                        <div class="tei-line tei-line-gap" data-missing-lines="{count(current-group())}"><span class="tei-vers-number tei-vers-number-global"></span><span class="tei-vers-number tei-vers-number-local"></span>[…]</div>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:apply-templates select="current-group()"/>
@@ -31,7 +31,7 @@
             <xsl:for-each-group select="*" group-adjacent="if (self::tei:l and normalize-space(string-join(.//text(), '')) = '') then 'empty-l' else concat('other-', position())">
                 <xsl:choose>
                     <xsl:when test="current-grouping-key() = 'empty-l'">
-                        <div class="tei-line tei-line-gap" data-missing-lines="{count(current-group())}">[…]</div>
+                        <div class="tei-line tei-line-gap" data-missing-lines="{count(current-group())}"><span class="tei-vers-number tei-vers-number-global"></span><span class="tei-vers-number tei-vers-number-local"></span>[…]</div>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:apply-templates select="current-group()"/>
@@ -58,7 +58,7 @@
                 <xsl:for-each-group select="*" group-adjacent="if (self::tei:l and normalize-space(string-join(.//text(), '')) = '') then 'empty-l' else concat('other-', position())">
                     <xsl:choose>
                         <xsl:when test="current-grouping-key() = 'empty-l'">
-                            <div class="tei-line tei-line-gap" data-missing-lines="{count(current-group())}">[…]</div>
+                            <div class="tei-line tei-line-gap" data-missing-lines="{count(current-group())}"><span class="tei-vers-number tei-vers-number-global"></span><span class="tei-vers-number tei-vers-number-local"></span>[…]</div>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:apply-templates select="current-group()"/>
@@ -84,6 +84,12 @@
                     <xsl:value-of select="$line_id"/>
                 </xsl:attribute>
             </xsl:if>
+            <span class="tei-vers-number tei-vers-number-global">
+                <xsl:value-of select="substring-after(@n, 'v_')"/>
+            </span>
+            <span class="tei-vers-number tei-vers-number-local">
+                <xsl:value-of select="substring-after(@xml:id, 'v_')"/>
+            </span>
             <xsl:apply-templates/>
         </div>
     </xsl:template>
