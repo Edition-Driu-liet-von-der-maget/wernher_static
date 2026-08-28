@@ -111,6 +111,19 @@ span.tei-vers-number-local {
     display: none; /* hidden by default */
 }
 
+/* Page break marker: renders "PREV|CURR" (or "|CURR" for the first page)
+   via pseudo-elements so the marker is not copied together with the text. */
+span.pb {
+    color: var(--color-text-muted);
+    font-size: 0.85em;
+}
+span.pb::before {
+    content: attr(data-prev) "|";
+}
+span.pb::after {
+    content: attr(data-curr);
+}
+
 /* --- Toolbar: toggle the display of verse numbers --- */
 
 .edition-toolbar {
