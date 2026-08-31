@@ -124,8 +124,31 @@
                                 <i aria-hidden="true"></i><span class="edition-toolbar-label">Lokale Versnummern</span>
                             </button>
                         </div>
-                        <xsl:call-template name="render_edition_metadata"/>
-                        <xsl:apply-templates select=".//tei:body"></xsl:apply-templates>
+                        <div class="edition-layout">
+                            <xsl:if test="exists(//tei:facsimile/tei:surface)">
+                                <xsl:attribute name="class">edition-layout edition-layout--facs</xsl:attribute>
+                            </xsl:if>
+                            <xsl:if test="exists(//tei:facsimile/tei:surface)">
+                                <aside class="edition-facs-col">
+                                    <div class="edition-facs-sticky">
+                                        <div id="edition-facs-viewer" class="edition-facs-viewer" role="img" aria-label="Faksimile der Handschriftenseite"></div>
+                                        <div class="edition-facs-caption">
+                                            <span id="edition-facs-label" class="edition-facs-label"></span>
+                                            <div class="edition-facs-nav" role="group" aria-label="Seitennavigation">
+                                                <button type="button" id="edition-facs-prev" class="btn edition-toolbar-btn edition-facs-btn" aria-label="Vorherige Seite" title="Vorherige Seite">
+                                                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                                                </button>
+                                                <button type="button" id="edition-facs-next" class="btn edition-toolbar-btn edition-facs-btn" aria-label="Nächste Seite" title="Nächste Seite">
+                                                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </aside>
+                            </xsl:if>
+                            <div class="edition-content-col">
+                                <xsl:call-template name="render_edition_metadata"/>
+                                <xsl:apply-templates select=".//tei:body"></xsl:apply-templates>
                         <p class="edition-footnotes-wrapper">
                             <xsl:for-each select=".//tei:note[not(./tei:p)]">
                                 <div class="footnotes">
@@ -154,6 +177,8 @@
                                 <xsl:with-param name="pageId" select="$link"/>
                             </xsl:call-template>
                         </div>
+                            </div>
+                        </div>
 
                     </div>
                     <xsl:for-each select="//tei:back">
@@ -164,6 +189,7 @@
                 </main>
                 <xsl:call-template name="html_footer"/>
                 <script src="vendor/openseadragon-bin-4.1.1/openseadragon.min.js"/>
+                <script src="js/facs-viewer.js"></script>
                 <script src="js/tei-line-dblclick.js"></script>
                 <script src="js/toggle-vers-numbers.js"></script>
             </body>

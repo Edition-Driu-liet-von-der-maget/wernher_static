@@ -304,7 +304,7 @@ span.tei-choice-ligature span.tei-orig::after {
 /* --- Metadata panel at top of edition page --- */
 
 .edition-metadata-block {
-    margin: 1.25rem 0 2rem 0;
+    margin: 0 0 2rem 0;
 }
 
 .edition-metadata-panel {
@@ -426,5 +426,85 @@ span.tei-choice-ligature span.tei-orig::after {
     .metadata-item {
         grid-template-columns: 1fr;
         row-gap: 0.15rem;
+    }
+}
+
+/* --- Facsimile viewer (OpenSeadragon) --- */
+
+.edition-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: 1rem;
+}
+
+.edition-layout--facs {
+    grid-template-columns: minmax(320px, 520px) 1fr;
+    /* Stretch grid items to the full row height so the sticky facsimile
+       column has room to travel while the text column scrolls. */
+    align-items: stretch;
+}
+
+.edition-content-col {
+    min-width: 0;
+}
+
+.edition-facs-sticky {
+    position: sticky;
+    top: 4.5rem;
+}
+
+.edition-facs-viewer {
+    width: 100%;
+    height: calc(100vh - 7rem);
+    min-height: 420px;
+    background: #1a1a1a;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+
+.edition-facs-viewer .openseadragon-container {
+    background: #1a1a1a;
+}
+
+.edition-facs-caption {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+}
+
+.edition-facs-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #652b49;
+}
+
+.edition-facs-nav {
+    display: inline-flex;
+    gap: 0.4rem;
+}
+
+.edition-facs-btn {
+    margin-right: 0;
+    padding: 0.3rem 0.7rem;
+}
+
+.edition-facs-btn:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+/* Facsimile is hidden on narrow viewports (text-only layout). */
+@media (max-width: 991.98px) {
+    .edition-facs-col {
+        display: none;
+    }
+
+    .edition-layout--facs {
+        grid-template-columns: 1fr;
     }
 }

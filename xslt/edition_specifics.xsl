@@ -3,6 +3,22 @@
 
     <xsl:output method="html" encoding="UTF-8" indent="yes"/>
 
+    <!-- Facsimile lookup: surface @xml:id -> IIIF info.json URL of its first graphic. -->
+    <xsl:key name="surface-url" match="tei:surface" use="@xml:id"/>
+
+    <!-- Page break: keeps the PREV|CURR marker from shared.xsl and additionally
+         exposes the linked facsimile surface so a script can sync an
+         OpenSeadragon viewer to the text (only witnesses with a <facsimile>
+         produce a non-empty @data-src). -->
+    <xsl:template match="tei:pb">
+        <xsl:variable name="cur" select="string(@n)"/>
+        <xsl:variable name="prev" select="string(preceding::tei:pb[1]/@n)"/>
+        <xsl:variable name="facs-id" select="substring-after(@facs, '#')"/>
+        <xsl:variable name="facs-url" select="string(key('surface-url', $facs-id, /)/tei:graphic[1]/@url)"/>
+        <span class="anchor-pb"></span>
+        <span class="pb" data-prev="{$prev}" data-curr="{$cur}" data-facs="{$facs-id}" data-src="{$facs-url}"></span>
+    </xsl:template>
+
 
     <!-- Witness-level group with collapsing of empty lines -->
     <xsl:template match="tei:lg[@type='witness']">
