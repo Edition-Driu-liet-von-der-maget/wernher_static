@@ -36,6 +36,7 @@ class ColumnViewerConfig {
   generateCitationUrlLabel = "Copy citation URL to clipboard";
   removeColumnLabel = "Remove column";
   copyUrlNotificationLabel = "URL copied to clipboard!";
+  witnessBarAriaLabel = "Witness selection";
 
   // ===========================================================================
   // CSS CLASS NAMES
@@ -55,6 +56,10 @@ class ColumnViewerConfig {
   controlsContainerTogglerClass = "synTexView_controls_toggle";
   controlsContainerClass = "synTexView_controls";
   copyUrlNotificationClass = "synTexView-url-copy-notification";
+  witnessBarContainerId = "synTexView-witness-bar";
+  witnessBarClass = "synTexView-witness-bar";
+  witnessBarButtonClass = "synTexView-witness-bar-button";
+  witnessBarActiveClass = "synTexView-witness-bar-active";
 
   // ===========================================================================
   // ARIA LABELS
