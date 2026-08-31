@@ -13,20 +13,7 @@
     </xsl:template>
     <xsl:template match="tei:pb">
         <xsl:variable name="cur" select="string(@n)"/>
-        <xsl:variable name="prev">
-            <xsl:choose>
-                <xsl:when test="$cur = '1' or $cur = '1r'"/>
-                <xsl:when test="ends-with($cur, 'v')">
-                    <xsl:value-of select="concat(substring($cur, 1, string-length($cur) - 1), 'r')"/>
-                </xsl:when>
-                <xsl:when test="matches($cur, '^[0-9]+r$')">
-                    <xsl:value-of select="concat(number(substring-before($cur, 'r')) - 1, 'v')"/>
-                </xsl:when>
-                <xsl:when test="matches($cur, '^[0-9]+$')">
-                    <xsl:value-of select="number($cur) - 1"/>
-                </xsl:when>
-            </xsl:choose>
-        </xsl:variable>
+        <xsl:variable name="prev" select="string(preceding::tei:pb[1]/@n)"/>
         <span class="anchor-pb"></span>
         <span class="pb" data-prev="{$prev}" data-curr="{$cur}" source="{@facs}"></span>
     </xsl:template>
