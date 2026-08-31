@@ -222,6 +222,10 @@ button.synTexView-remove-column {
         display: none;
     }
 
+    .synTexView-controls-container {
+        display: none;
+    }
+
     .synTexView-witness {
         flex: 0 0 calc(100vw - 1rem);
         width: calc(100vw - 1rem);

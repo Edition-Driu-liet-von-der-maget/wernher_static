@@ -28,6 +28,65 @@ class EditionManager {
     addButton.style.display = isMobile ? "none" : "";
   }
 
+  getVisibleColumnId() {
+    const columns = this.state.getAllColumns();
+    return columns.length ? columns[0].id : null;
+  }
+
+  getVisibleColumnWitnessId() {
+    const columnId = this.getVisibleColumnId();
+    if (!columnId) return null;
+    const col = this.state.getColumn(columnId);
+    return col ? col.witnessId : null;
+  }
+
+  createWitnessBar() {
+    const existing = document.getElementById(this.config.witnessBarContainerId);
+    if (existing) existing.remove();
+
+    const bar = document.createElement("div");
+    bar.id = this.config.witnessBarContainerId;
+    bar.className = this.config.witnessBarClass;
+    bar.setAttribute("role", "tablist");
+    bar.setAttribute("aria-label", this.config.witnessBarAriaLabel);
+
+    this.state.sortedWitnessIds.forEach((witnessId) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = this.config.witnessBarButtonClass;
+      button.textContent = this.state.witness_metadata[witnessId].title;
+      button.setAttribute("role", "tab");
+      button.dataset.witnessId = witnessId;
+      button.addEventListener("click", () =>
+        this.selectWitnessFromBar(witnessId)
+      );
+      bar.appendChild(button);
+    });
+
+    this.witnessContainer.parentNode.insertBefore(bar, this.witnessContainer);
+    this.updateWitnessBarHighlight(this.getVisibleColumnWitnessId());
+  }
+
+  selectWitnessFromBar(witnessId) {
+    const columnId = this.getVisibleColumnId();
+    if (!columnId) return;
+    this.updateColumnWitness(columnId, witnessId);
+    const dropdown = document.getElementById(`dropdown-${columnId}`);
+    if (dropdown) dropdown.value = witnessId;
+    this.updateWitnessBarHighlight(witnessId);
+    this.updateUrlWithState();
+  }
+
+  updateWitnessBarHighlight(witnessId) {
+    const bar = document.getElementById(this.config.witnessBarContainerId);
+    if (!bar) return;
+    bar.querySelectorAll(`.${this.config.witnessBarButtonClass}`).forEach((button) => {
+      const isSelected = button.dataset.witnessId === witnessId;
+      button.setAttribute("aria-selected", isSelected ? "true" : "false");
+      button.classList.toggle(this.config.witnessBarActiveClass, isSelected);
+    });
+  }
+
   getReloadAttemptStorageKey() {
     return `synTexViewReloadAttempts:${window.location.pathname}${window.location.search}`;
   }
@@ -374,6 +433,7 @@ class EditionManager {
       if (event.target.matches(`.${this.config.witnessSelectClass}`)) {
         const columnId = event.target.getAttribute("data-column-id");
         this.updateColumnWitness(columnId, event.target.value);
+        this.updateWitnessBarHighlight(event.target.value);
         this.updateUrlWithState();
       }
     });

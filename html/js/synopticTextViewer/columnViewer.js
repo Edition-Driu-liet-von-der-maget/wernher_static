@@ -306,6 +306,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
   const manager = new EditionManager(state, config);
   await manager.initColumns(stateFromUrl.witnessIds);
+  manager.createWitnessBar();
   createControls(config, manager);
   manager.updateMobileUiControls();
   window.addEventListener("resize", () => manager.updateMobileUiControls());

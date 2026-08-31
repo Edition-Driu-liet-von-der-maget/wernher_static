@@ -116,3 +116,52 @@ span.synTexView-highlight.synTexView-neighbor {
     background-color: #6e2d4f;
     border-radius: var(--radius-sm);
 }
+
+/* Horizontal witness selector bar — mobile only */
+#synTexView-witness-bar {
+    display: none;
+}
+
+@media (max-width: 800px) {
+    #synTexView-witness-bar {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        padding: 0.5rem 0.25rem;
+        margin: 0.75rem 0.25rem 0.25rem;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        scrollbar-width: thin;
+    }
+
+    .synTexView-witness-bar-button {
+        flex: 0 0 auto;
+        padding: 0.4rem 0.9rem;
+        white-space: nowrap;
+        background-color: var(--color-surface-muted);
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        line-height: 1.2;
+        user-select: none;
+    }
+
+    .synTexView-witness-bar-button:hover,
+    .synTexView-witness-bar-button:focus {
+        background-color: var(--color-accent-soft);
+        border-color: var(--color-border-strong);
+        color: var(--color-link-hover);
+    }
+
+    .synTexView-witness-bar-button.synTexView-witness-bar-active {
+        background-color: var(--color-accent);
+        border-color: var(--color-accent);
+        color: #ffffff;
+    }
+}
