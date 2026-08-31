@@ -60,6 +60,7 @@ div.tei-line.tei-line-gap {
     padding: 0 0.5em;
     border-radius: var(--radius-xs);
 }
+
 div.tei-line.tei-line-gap:hover::after {
     content: attr(data-missing-lines) " missing line(s)";
     display: inline-block;
@@ -103,13 +104,16 @@ span.tei-vers-number {
     line-height: 1;
     vertical-align: baseline;
 }
+
 span.tei-vers-number-global {
     color: var(--color-number);
 }
+
 span.tei-vers-number-local {
     color: var(--color-text-muted);
     font-style: italic;
-    display: none; /* hidden by default */
+    display: none;
+    /* hidden by default */
 }
 
 /* Page break marker: renders "PREV|CURR" (or "|CURR" for the first page)
@@ -118,9 +122,11 @@ span.pb {
     color: var(--color-text-muted);
     font-size: 0.85em;
 }
+
 span.pb::before {
     content: attr(data-prev) "|";
 }
+
 span.pb::after {
     content: attr(data-curr);
 }
@@ -132,10 +138,41 @@ span.tei-gap {
 
 /* Material gap (torn / missing material at a boundary of empty verses):
    dedicated line with […–…]. */
-div.tei-material-gap {
+/* hr.tei-material-gap {
     color: var(--color-text-muted);
     margin: 0.15rem 0;
+} */
+
+div.tei-material-gap {
+    --color: #333;
+    --stroke: 0.1rem;
+    --height: 1rem;
+    --period: 2rem;
+    margin: 3rem 5rem;
+    min-width: 6rem;
+    max-width: 40%;
+    border: 0;
+    height: var(--height);
+
+    background:
+        linear-gradient(
+            135deg,
+            transparent calc(50% - var(--stroke) / 2),
+            var(--color) calc(50% - var(--stroke) / 2),
+            var(--color) calc(50% + var(--stroke) / 2),
+            transparent calc(50% + var(--stroke) / 2)
+        ) 0 0 / var(--period) var(--height) repeat-x,
+        linear-gradient(
+            45deg,
+            transparent calc(50% - var(--stroke) / 2),
+            var(--color) calc(50% - var(--stroke) / 2),
+            var(--color) calc(50% + var(--stroke) / 2),
+            transparent calc(50% + var(--stroke) / 2)
+        ) calc(var(--period) / 2) 0 / var(--period) var(--height) repeat-x;
 }
+}
+
+
 
 /* --- Toolbar: toggle the display of verse numbers --- */
 
@@ -180,6 +217,7 @@ div.tei-material-gap {
 body.hide-global-vers-numbers span.tei-vers-number-global {
     display: none;
 }
+
 body.show-local-vers-numbers span.tei-vers-number-local {
     display: inline-block;
 }
@@ -246,7 +284,8 @@ span.tei-sup {
 span.tei-choice-ligature span.tei-orig {
     position: relative;
     display: inline-block;
-    padding-bottom: 0.15em; /* space for bracket */
+    padding-bottom: 0.15em;
+    /* space for bracket */
 }
 
 /* U-shaped bracket under the ligature span */
@@ -306,7 +345,7 @@ span.tei-choice-ligature span.tei-orig::after {
     padding: 1rem 1.1rem 1.2rem 1.1rem;
 }
 
-.metadata-section + .metadata-section {
+.metadata-section+.metadata-section {
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px dashed var(--color-border);
@@ -360,7 +399,7 @@ span.tei-choice-ligature span.tei-orig::after {
     padding-left: 1.2rem;
 }
 
-.metadata-notes li + li {
+.metadata-notes li+li {
     margin-top: 0.35rem;
 }
 

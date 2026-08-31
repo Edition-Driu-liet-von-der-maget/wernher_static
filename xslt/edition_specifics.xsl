@@ -79,7 +79,8 @@
         <xsl:variable name="prevTrailingGap" select="exists($prevNonEmpty) and exists($prevNonEmpty/tei:gap) and not($prevNonEmpty/tei:gap[last()]/following-sibling::*[not(self::tei:pb)]) and not(normalize-space(string-join($prevNonEmpty/tei:gap[last()]/following-sibling::text(), '')))"/>
 
         <xsl:if test="$emptyBefore and $leadingGap and not($prevTrailingGap)">
-            <div class="tei-material-gap">[…–…]</div>
+            <!-- <div class="tei-material-gap">[…–…]</div> -->
+            <div class="tei-material-gap"/>
         </xsl:if>
         <div class="tei-line">
             <xsl:if test="@n">
@@ -101,7 +102,8 @@
             <xsl:apply-templates/>
         </div>
         <xsl:if test="$emptyAfter and $trailingGap">
-            <div class="tei-material-gap">[…–…]</div>
+            <!-- <div class="tei-material-gap">[…–…]</div> -->
+            <div class="tei-material-gap"></div>
         </xsl:if>
     </xsl:template>
 <!-- Decorated initials / lombards as TEI c -->
