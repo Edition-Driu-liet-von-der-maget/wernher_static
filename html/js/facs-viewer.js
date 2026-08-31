@@ -9,6 +9,10 @@
   // "current" page. Keep in sync with .edition-facs-sticky { top } so the
   // image flips as the previous page scrolls out from under the sticky viewer.
   var TOP_OFFSET = 72;
+  // Landing position (px from viewport top) when the prev/next buttons jump
+  // the text. Kept clearly below TOP_OFFSET so the sync logic can never
+  // mistake the target page for the previous one due to subpixel rounding.
+  var LANDING_OFFSET = TOP_OFFSET - 32;
 
   function init() {
     var viewerEl = document.getElementById(VIEWER_ID);
@@ -78,6 +82,20 @@
       viewer.open(page.src);
     }
 
+    // Jump the text to the position of the given page. The viewer is then
+    // synced from the actual scroll position (single source of truth), so the
+    // scroll event that follows can never revert the image to another page.
+    function scrollToPage(index) {
+      index = Math.max(0, Math.min(pages.length - 1, index));
+      if (index === currentIndex) {
+        return;
+      }
+      var page = pages[index];
+      var y = Math.max(0, page.el.getBoundingClientRect().top + window.scrollY - LANDING_OFFSET);
+      window.scrollTo({ top: y, behavior: 'instant' });
+      showPage(getActiveIndex());
+    }
+
     function getActiveIndex() {
       var active = 0;
       // Markers follow the reading order (top to bottom), so the first marker
@@ -92,26 +110,21 @@
       return active;
     }
 
-    var ticking = false;
     function update() {
-      if (ticking) {
-        return;
-      }
-      ticking = true;
-      window.requestAnimationFrame(function () {
-        ticking = false;
-        showPage(getActiveIndex());
-      });
+      // Runs synchronously: scroll events are already coalesced to the frame
+      // rate, and this also works when the page first paints in a background
+      // tab (where requestAnimationFrame would be paused).
+      showPage(getActiveIndex());
     }
 
     if (prevBtn) {
       prevBtn.addEventListener('click', function () {
-        showPage(currentIndex - 1);
+        scrollToPage(currentIndex - 1);
       });
     }
     if (nextBtn) {
       nextBtn.addEventListener('click', function () {
-        showPage(currentIndex + 1);
+        scrollToPage(currentIndex + 1);
       });
     }
 
@@ -121,6 +134,8 @@
     // Anchor-link loads: the browser may already have scrolled to #v_N before
     // this script runs, so recompute once the page and its layout are ready.
     window.addEventListener('load', update);
+    // Also fires on bfcache restore / after scroll position is restored.
+    window.addEventListener('pageshow', update);
     window.addEventListener('hashchange', function () {
       window.setTimeout(update, 0);
     });
