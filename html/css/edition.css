@@ -219,12 +219,16 @@ body.show-local-vers-numbers span.tei-vers-number-local {
 
 /* --- Initials and rubrication --- */
 
-/* Decorated initials (including lombard initials) as tei:c */
-span.tei-c.tei-c-initial,
 span.tei-c.tei-c-lombard,
-span.tei-hi.tei-hi-initial,
 span.tei-hi.tei-hi-lombard {
-    font-size: 1.8em;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--color-rubric);
+}
+
+span.tei-c.tei-c-initial,
+span.tei-hi.tei-hi-initial {
+    font-size: 2em;
     font-weight: 700;
     color: var(--color-rubric);
 }
