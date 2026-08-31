@@ -81,12 +81,6 @@ div.tei-lg.tei-lg-sub-group {
     margin-bottom: .5rem;
 }
 
-/* Sub-group body: indented block with a left border */
-.tei-subgroup-body {
-    margin-left: 1.5rem;
-    padding-left: 0.75rem;
-}
-
 /* Individual verse lines */
 div.tei-line {
     line-height: 1.4;
