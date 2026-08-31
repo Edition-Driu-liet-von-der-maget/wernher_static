@@ -191,6 +191,7 @@ div.tei-material-gap {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-soft);
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    margin-right: 1rem
 }
 
 .edition-toolbar-btn:hover {
