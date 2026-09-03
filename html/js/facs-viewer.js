@@ -65,6 +65,10 @@
     var syncBtn = document.getElementById('toggle-facs-sync');
     var currentIndex = -1;
     var syncEnabled = true;
+    // While decoupled, tracks which side the user last moved ('text' via
+    // scrolling, 'image' via the prev/next buttons), so re-enabling sync
+    // knows which side should follow the other.
+    var lastAction = null;
 
     var viewer = window.OpenSeadragon({
       id: VIEWER_ID,
@@ -159,7 +163,14 @@
         syncBtn.setAttribute('aria-pressed', enabled ? 'true' : 'false');
       }
       if (enabled) {
-        resyncTextToImage();
+        // Whichever side moved last while decoupled now drives the other;
+        // with no prior action, default to the old "text follows image".
+        if (lastAction === 'text') {
+          showPage(getActiveIndex());
+        } else {
+          resyncTextToImage();
+        }
+        lastAction = null;
       }
     }
 
@@ -168,6 +179,7 @@
         if (syncEnabled) {
           scrollToPage(currentIndex - 1);
         } else {
+          lastAction = 'image';
           showPage(currentIndex - 1);
         }
       });
@@ -177,6 +189,7 @@
         if (syncEnabled) {
           scrollToPage(currentIndex + 1);
         } else {
+          lastAction = 'image';
           showPage(currentIndex + 1);
         }
       });
@@ -187,7 +200,13 @@
       });
     }
 
-    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('scroll', function () {
+      if (!syncEnabled) {
+        lastAction = 'text';
+        return;
+      }
+      update();
+    }, { passive: true });
     window.addEventListener('resize', function () {
       // Toolbar can wrap onto a second line at narrow widths, changing its
       // height, so the offset must be recomputed (not just re-applied).
