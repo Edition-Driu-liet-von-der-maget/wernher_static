@@ -54,7 +54,6 @@
                             <table id="myTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" width="20" tabulator-formatter="html" tabulator-headerSort="false" tabulator-download="false">#</th>
                                         <th scope="col" tabulator-headerFilter="input">Name</th>
                                         <th scope="col" tabulator-headerFilter="input">ID</th>
                                     </tr>
@@ -65,14 +64,6 @@
                                             <xsl:value-of select="data(@xml:id)"/>
                                         </xsl:variable>
                                         <tr>
-                                            <td>
-                                                <a>
-                                                  <xsl:attribute name="href">
-                                                  <xsl:value-of select="concat($id, '.html')"/>
-                                                  </xsl:attribute>
-                                                  <i class="bi bi-link-45deg"/>
-                                                </a>
-                                            </td>
                                             <td>
                                                 <xsl:value-of select=".//tei:orgName[1]/text()"/>
                                             </td>
