@@ -2,6 +2,7 @@
   'use strict';
 
   var VIEWER_ID = 'edition-facs-viewer';
+  var DISCLAIMER_ID = 'edition-facs-disclaimer';
   var LABEL_ID = 'edition-facs-label';
   var PREV_ID = 'edition-facs-prev';
   var NEXT_ID = 'edition-facs-next';
@@ -60,11 +61,14 @@
     }
 
     var labelEl = document.getElementById(LABEL_ID);
+    var disclaimerEl = document.getElementById(DISCLAIMER_ID);
     var prevBtn = document.getElementById(PREV_ID);
     var nextBtn = document.getElementById(NEXT_ID);
     var syncBtn = document.getElementById('toggle-facs-sync');
     var currentIndex = -1;
     var syncEnabled = true;
+    var disclaimerCache = Object.create(null);
+    var disclaimerRequestToken = 0;
     // While decoupled, tracks which side the user last moved ('text' via
     // scrolling, 'image' via the prev/next buttons), so re-enabling sync
     // knows which side should follow the other.
@@ -83,6 +87,134 @@
       visibilityRatio: 1,
       constrainDuringPan: true
     });
+
+    function iiifText(value) {
+      if (!value) {
+        return '';
+      }
+      if (typeof value === 'string') {
+        return value.trim();
+      }
+      if (Array.isArray(value)) {
+        for (var i = 0; i < value.length; i++) {
+          var arrayText = iiifText(value[i]);
+          if (arrayText) {
+            return arrayText;
+          }
+        }
+        return '';
+      }
+      if (typeof value === 'object') {
+        if (value['@value']) {
+          return iiifText(value['@value']);
+        }
+        var keys = Object.keys(value);
+        for (var j = 0; j < keys.length; j++) {
+          var objectText = iiifText(value[keys[j]]);
+          if (objectText) {
+            return objectText;
+          }
+        }
+      }
+      return '';
+    }
+
+    function firstDisclaimer(info) {
+      if (!info || typeof info !== 'object') {
+        return '';
+      }
+      var candidates = [
+        iiifText(info.requiredStatement && info.requiredStatement.value),
+        iiifText(info.attribution),
+        iiifText(info.rights),
+        iiifText(info.license)
+      ];
+      for (var i = 0; i < candidates.length; i++) {
+        if (candidates[i]) {
+          return candidates[i];
+        }
+      }
+      if (Array.isArray(info.metadata)) {
+        var firstUrlValue = '';
+        for (var j = 0; j < info.metadata.length; j++) {
+          var entry = info.metadata[j] || {};
+          var label = iiifText(entry.label).toLowerCase();
+          var value = iiifText(entry.value);
+          if (!value) {
+            continue;
+          }
+          if (/copyright|rights|license|lizenz|attribution|nachweis|quelle|source/.test(label)) {
+            return value;
+          }
+          if (!firstUrlValue && value.indexOf('http') !== -1) {
+            firstUrlValue = value;
+          }
+        }
+        if (firstUrlValue) {
+          return firstUrlValue;
+        }
+      }
+      return '';
+    }
+
+    function renderDisclaimer(text) {
+      if (!disclaimerEl) {
+        return;
+      }
+      disclaimerEl.textContent = '';
+      if (!text) {
+        return;
+      }
+      var last = 0;
+      var urlRegex = /https?:\/\/[^\s<>"')]+/g;
+      var match = null;
+      while ((match = urlRegex.exec(text)) !== null) {
+        if (match.index > last) {
+          disclaimerEl.appendChild(document.createTextNode(text.slice(last, match.index)));
+        }
+        var link = document.createElement('a');
+        link.href = match[0];
+        link.textContent = match[0];
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        disclaimerEl.appendChild(link);
+        last = match.index + match[0].length;
+      }
+      if (last < text.length) {
+        disclaimerEl.appendChild(document.createTextNode(text.slice(last)));
+      }
+    }
+
+    function updateDisclaimer(src) {
+      if (!disclaimerEl || !src) {
+        return;
+      }
+      if (Object.prototype.hasOwnProperty.call(disclaimerCache, src)) {
+        renderDisclaimer(disclaimerCache[src]);
+        return;
+      }
+      var requestToken = ++disclaimerRequestToken;
+      fetch(src)
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error('Failed to load IIIF info.json');
+          }
+          return response.json();
+        })
+        .then(function (info) {
+          var text = firstDisclaimer(info);
+          disclaimerCache[src] = text;
+          if (requestToken === disclaimerRequestToken) {
+            renderDisclaimer(text);
+          }
+        })
+        .catch(function () {
+          disclaimerCache[src] = '';
+          if (requestToken === disclaimerRequestToken) {
+            renderDisclaimer('');
+          }
+        });
+    }
 
     function showPage(index) {
       index = Math.max(0, Math.min(pages.length - 1, index));
@@ -105,6 +237,7 @@
       // Pass the info.json URL; OSD fetches it and detects the IIIF Image
       // API v3 service. Switching pages re-opens the viewer with that page.
       viewer.open(page.src);
+      updateDisclaimer(page.src);
     }
 
     // Jump the text to the position of the given page. The viewer is then

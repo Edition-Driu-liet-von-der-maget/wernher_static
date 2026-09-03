@@ -140,6 +140,7 @@
                                 <aside class="edition-facs-col">
                                     <div class="edition-facs-sticky">
                                         <div id="edition-facs-viewer" class="edition-facs-viewer" role="img" aria-label="Faksimile der Handschriftenseite"></div>
+                                        <div id="edition-facs-disclaimer" class="edition-facs-disclaimer"></div>
                                         <div class="edition-facs-caption">
                                             <span id="edition-facs-label" class="edition-facs-label"></span>
                                             <div class="edition-facs-nav" role="group" aria-label="Seitennavigation">
