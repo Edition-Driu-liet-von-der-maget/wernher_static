@@ -5,16 +5,35 @@
   var LABEL_ID = 'edition-facs-label';
   var PREV_ID = 'edition-facs-prev';
   var NEXT_ID = 'edition-facs-next';
+  var TOOLBAR_SELECTOR = '.edition-toolbar';
+  // Extra breathing room below the sticky toolbar so the first lines of a
+  // page are still readable (not flush against the toolbar) before the
+  // switch/landing logic considers them "current".
+  var TOOLBAR_BUFFER = 24;
   // Distance from the viewport top below which a page break counts as the
-  // "current" page. Keep in sync with .edition-facs-sticky { top } so the
-  // image flips as the previous page scrolls out from under the sticky viewer.
+  // "current" page. Recomputed from the sticky toolbar's actual height (see
+  // updateToolbarOffset), since that height can change (wrapping, added
+  // controls). Also drives .edition-facs-sticky { top } via a CSS variable
+  // so the image flips as the previous page scrolls out from under it.
   var TOP_OFFSET = 72;
   // Landing position (px from viewport top) when the prev/next buttons jump
   // the text. Kept clearly below TOP_OFFSET so the sync logic can never
   // mistake the target page for the previous one due to subpixel rounding.
   var LANDING_OFFSET = TOP_OFFSET - 32;
 
+  function updateToolbarOffset() {
+    var toolbar = document.querySelector(TOOLBAR_SELECTOR);
+    var toolbarHeight = toolbar ? toolbar.getBoundingClientRect().height : 0;
+    TOP_OFFSET = toolbarHeight + TOOLBAR_BUFFER;
+    LANDING_OFFSET = toolbarHeight + 8;
+    document.documentElement.style.setProperty(
+      '--edition-toolbar-offset',
+      TOP_OFFSET + 'px'
+    );
+  }
+
   function init() {
+    updateToolbarOffset();
     var viewerEl = document.getElementById(VIEWER_ID);
     if (!viewerEl || !window.OpenSeadragon) {
       return;
@@ -169,7 +188,12 @@
     }
 
     window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
+    window.addEventListener('resize', function () {
+      // Toolbar can wrap onto a second line at narrow widths, changing its
+      // height, so the offset must be recomputed (not just re-applied).
+      updateToolbarOffset();
+      update();
+    });
 
     // Anchor-link loads: the browser may already have scrolled to #v_N before
     // this script runs, so recompute once the page and its layout are ready.

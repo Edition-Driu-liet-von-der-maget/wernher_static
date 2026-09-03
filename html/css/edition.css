@@ -470,7 +470,7 @@ span.tei-choice-ligature span.tei-orig::after {
 
 .edition-facs-sticky {
     position: sticky;
-    top: 4.5rem;
+    top: var(--edition-toolbar-offset, 4.5rem);
 }
 
 .edition-facs-viewer {
