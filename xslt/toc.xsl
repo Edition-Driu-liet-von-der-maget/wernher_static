@@ -193,6 +193,14 @@
 
                 <xsl:call-template name="html_footer"/>
                 <xsl:call-template name="tabulator_js"/>
+                <script>
+                    table.on("rowClick", function (e, row) {
+                        const link = row.getElement().querySelector("a[href]");
+                        if (link) {
+                            window.location.href = link.href;
+                        }
+                    });
+                </script>
             </body>
         </html>
     </xsl:template>
