@@ -164,7 +164,6 @@ div.tei-material-gap {
             transparent calc(50% + var(--stroke) / 2)
         ) calc(var(--period) / 2) 0 / var(--period) var(--height) repeat-x;
 }
-}
 
 
 
@@ -174,8 +173,16 @@ div.tei-material-gap {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
-    margin: 0.75rem 0 1rem 0;
+    gap: 0.6rem;
+    margin: 0 0 1.5rem 0;
+    padding: 0.75rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--color-bg-bottom);
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    box-shadow: var(--shadow-soft);
 }
 
 .edition-toolbar-btn {
@@ -191,7 +198,6 @@ div.tei-material-gap {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-soft);
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-    margin-right: 1rem
 }
 
 .edition-toolbar-btn:hover {
@@ -203,6 +209,19 @@ div.tei-material-gap {
     background-color: #7b3557;
     border-color: #7b3557;
     color: #fff;
+}
+
+.edition-toolbar-btn--push-end {
+    margin-left: auto;
+}
+
+.edition-toolbar-arrow-up {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 0.35rem solid transparent;
+    border-right: 0.35rem solid transparent;
+    border-bottom: 0.5rem solid currentColor;
 }
 
 #toggle-local-vers-numbers .edition-toolbar-label {

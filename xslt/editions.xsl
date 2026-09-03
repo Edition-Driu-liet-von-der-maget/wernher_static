@@ -123,6 +123,9 @@
                             <button type="button" id="toggle-local-vers-numbers" class="btn edition-toolbar-btn" aria-pressed="false" title="Lokale Versnummern ein- bzw. ausblenden">
                                 <i aria-hidden="true"></i><span class="edition-toolbar-label">Lokale Versnummern</span>
                             </button>
+                            <button type="button" id="scroll-to-top" class="btn edition-toolbar-btn edition-toolbar-btn--push-end" title="Nach oben scrollen">
+                                <span class="edition-toolbar-arrow-up" aria-hidden="true"></span><span class="edition-toolbar-label">Nach oben</span>
+                            </button>
                         </div>
                         <div class="edition-layout">
                             <xsl:if test="exists(//tei:facsimile/tei:surface)">
@@ -192,6 +195,7 @@
                 <script src="js/facs-viewer.js"></script>
                 <script src="js/tei-line-dblclick.js"></script>
                 <script src="js/toggle-vers-numbers.js"></script>
+                <script src="js/scroll-to-top.js"></script>
             </body>
         </html>
     </xsl:template>
