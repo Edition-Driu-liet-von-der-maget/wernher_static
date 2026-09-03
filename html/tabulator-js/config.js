@@ -10,6 +10,13 @@ var config = {
             return;
         }
 
+        const rowElement = row.getElement();
+        const rowLink = rowElement.querySelector("a[href]");
+        if (rowLink) {
+            window.location.href = rowLink.getAttribute("href");
+            return;
+        }
+
         const rowData = row.getData();
         const rowId = rowData.ID;
 
