@@ -123,6 +123,11 @@
                             <button type="button" id="toggle-local-vers-numbers" class="btn edition-toolbar-btn" aria-pressed="false" title="Lokale Versnummern ein- bzw. ausblenden">
                                 <i aria-hidden="true"></i><span class="edition-toolbar-label">Lokale Versnummern</span>
                             </button>
+                            <xsl:if test="exists(//tei:facsimile/tei:surface)">
+                                <button type="button" id="toggle-facs-sync" class="btn edition-toolbar-btn" aria-pressed="true" title="Text/Bild synchronisieren ein- bzw. ausschalten">
+                                    <i class="bi bi-link-45deg" aria-hidden="true"></i><span class="edition-toolbar-label">Text/Bild synchronisieren</span>
+                                </button>
+                            </xsl:if>
                             <button type="button" id="scroll-to-top" class="btn edition-toolbar-btn edition-toolbar-btn--push-end" title="Nach oben scrollen">
                                 <span class="edition-toolbar-arrow-up" aria-hidden="true"></span><span class="edition-toolbar-label">Nach oben</span>
                             </button>

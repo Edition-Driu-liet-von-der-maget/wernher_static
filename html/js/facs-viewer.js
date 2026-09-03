@@ -43,7 +43,9 @@
     var labelEl = document.getElementById(LABEL_ID);
     var prevBtn = document.getElementById(PREV_ID);
     var nextBtn = document.getElementById(NEXT_ID);
+    var syncBtn = document.getElementById('toggle-facs-sync');
     var currentIndex = -1;
+    var syncEnabled = true;
 
     var viewer = window.OpenSeadragon({
       id: VIEWER_ID,
@@ -114,17 +116,55 @@
       // Runs synchronously: scroll events are already coalesced to the frame
       // rate, and this also works when the page first paints in a background
       // tab (where requestAnimationFrame would be paused).
+      if (!syncEnabled) {
+        return;
+      }
       showPage(getActiveIndex());
+    }
+
+    // Re-align the text with whatever page the facsimile currently shows,
+    // bypassing scrollToPage's "already there" guard (text may have drifted
+    // while sync was off).
+    function resyncTextToImage() {
+      var page = pages[currentIndex];
+      if (!page) {
+        return;
+      }
+      var y = Math.max(0, page.el.getBoundingClientRect().top + window.scrollY - LANDING_OFFSET);
+      window.scrollTo({ top: y, behavior: 'instant' });
+    }
+
+    function setSync(enabled) {
+      syncEnabled = enabled;
+      if (syncBtn) {
+        syncBtn.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+      }
+      if (enabled) {
+        resyncTextToImage();
+      }
     }
 
     if (prevBtn) {
       prevBtn.addEventListener('click', function () {
-        scrollToPage(currentIndex - 1);
+        if (syncEnabled) {
+          scrollToPage(currentIndex - 1);
+        } else {
+          showPage(currentIndex - 1);
+        }
       });
     }
     if (nextBtn) {
       nextBtn.addEventListener('click', function () {
-        scrollToPage(currentIndex + 1);
+        if (syncEnabled) {
+          scrollToPage(currentIndex + 1);
+        } else {
+          showPage(currentIndex + 1);
+        }
+      });
+    }
+    if (syncBtn) {
+      syncBtn.addEventListener('click', function () {
+        setSync(!syncEnabled);
       });
     }
 
